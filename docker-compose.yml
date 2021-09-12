@@ -1,0 +1,19 @@
+version: '3'
+services: 
+    app:
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        working_dir: /var/www
+        restart: unless-stopped
+        tty: true
+        ports: 
+            - "8080:8080"
+        volumes: 
+            - ./:/var/www
+        networks: 
+            - node_network
+
+networks:
+    node_network:
+        driver: bridge
