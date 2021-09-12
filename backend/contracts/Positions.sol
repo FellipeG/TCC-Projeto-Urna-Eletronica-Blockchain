@@ -29,7 +29,7 @@ contract Positions {
       string name
     )
   {
-    Position memory position = posaitions[name];
+    Position memory position = positions[name];
     require(position.name != 0, "Position not found");
     return(position.name);
   }
