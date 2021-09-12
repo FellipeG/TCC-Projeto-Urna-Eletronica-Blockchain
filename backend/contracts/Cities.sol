@@ -13,7 +13,7 @@ contract Cities {
   }
 
   modifier unique(string cityName) {
-    require(cities[cityName] == 0, "The city name must be unique");
+    require(cities[cityName] == '', "The city name must be unique");
     _;
   }
 
@@ -31,7 +31,11 @@ contract Cities {
     )
   {
     City memory city = cities[name];
-    require(city.name != 0, "City not found");
-    return(city.name);
+    require(city.name != '', "City not found");
+
+    return(
+      city.name
+    );
+    
   }
 }

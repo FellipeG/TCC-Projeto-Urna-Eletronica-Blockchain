@@ -11,7 +11,7 @@ contract ElectoralTitles {
   mapping(string => ElectoralTitleData) electoralTitles;
 
   modifier unique(string electoralNumber) {
-    require(electoralTitles[electoralNumber].fullName == 0, "Electoral number must be unique");
+    require(electoralTitles[electoralNumber].fullName == '', "Electoral number must be unique");
     _;
   }
 
@@ -31,7 +31,11 @@ contract ElectoralTitles {
     )
   {
     ElectoralTitleData memory electoralTitle = electoralTitles[electoralNumber];
-    require(electoralTitle.electoralNumber != 0, "Electoral title not found");
-    return(electoralTitle.electoralNumber, electoralTitle.fullName);
+    require(electoralTitle.electoralNumber != '', "Electoral title not found");
+
+    return(
+      electoralTitle.electoralNumber,
+      electoralTitle.fullName
+    );
   }
 }

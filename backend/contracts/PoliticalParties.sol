@@ -12,7 +12,7 @@ contract PoliticalParties {
   }
 
   modifier unique(string name) {
-    require(politicalParties[name] == 0, "The political party must be unique");
+    require(politicalParties[name] == '', "The political party must be unique");
     _;
   }
 
@@ -30,7 +30,10 @@ contract PoliticalParties {
     )
   {
     PoliticalParty memory politicalParty = politicalParties[name];
-    require(politicalParty.name != 0, "Political party not found");
-    return(politicalParty.name);
+    require(politicalParty.name != '', "Political party not found");
+
+    return(
+      politicalParty.name
+    );
   }
 }

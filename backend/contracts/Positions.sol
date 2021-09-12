@@ -12,7 +12,7 @@ contract Positions {
   }
 
   modifier unique(string position) {
-    require(states[stateName] == 0, "The position must be unique");
+    require(states[stateName] == '', "The position must be unique");
     _;
   }
 
@@ -30,7 +30,10 @@ contract Positions {
     )
   {
     Position memory position = positions[name];
-    require(position.name != 0, "Position not found");
-    return(position.name);
+    require(position.name != '', "Position not found");
+
+    return(
+      position.name
+    );
   }
 }

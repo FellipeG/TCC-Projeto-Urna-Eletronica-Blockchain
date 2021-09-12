@@ -12,7 +12,7 @@ contract States {
   }
 
   modifier unique(string stateName) {
-    require(states[stateName] == 0, "The state name must be unique");
+    require(states[stateName] == '', "The state name must be unique");
     _;
   }
 
@@ -30,7 +30,10 @@ contract States {
     )
   {
     State memory state = states[name];
-    require(state.name != 0, "State not found");
-    return(state.name);
+    require(state.name != '', "State not found");
+
+    return(
+      state.name
+    );
   }
 }
