@@ -1,13 +1,13 @@
-const Positions = artifacts.require("Positions");
+const Elections = artifacts.require("Elections");
 
 /*
  * uncomment accounts to access the test accounts made available by the
  * Ethereum client
  * See docs: https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-javascript
  */
-contract("Positions", function (/* accounts */) {
+contract("Elections", function (/* accounts */) {
   it("should assert true", async function () {
-    await Positions.deployed();
+    await Elections.deployed();
     return assert.isTrue(true);
   });
 });
