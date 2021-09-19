@@ -125,7 +125,7 @@ contract Elections {
     );
 
     emit CreatedCandidateEvent(
-      ullName,
+      fullName,
       birthDate,
       politicalParty,
       position,
