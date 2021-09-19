@@ -5,6 +5,7 @@ contract Elections {
 
   address owner;
 
+  // structs
   struct Candidate {
     string fullName;
     string birthDate;
@@ -41,6 +42,38 @@ contract Elections {
     string name;
     bool initialized;
   }
+
+  //events
+  event CreatedCandidateEvent(
+    string fullName,
+    string birthDate,
+    string politicalParty,
+    string position,
+    string state,
+    string city,
+    string electoralNumber
+  );
+
+  event CreatedCityEvent(
+    string name
+  );
+
+  event CreatedElectoralTitleDataEvent(
+    string electoralNumber,
+    string fullName
+  );
+
+  event CreatedPoliticalPartyEvent(
+    string name
+  );
+
+  event CreatedPositionEvent(
+    string name
+  );
+
+  event CreatedStateEvent(
+    string name
+  );
 
   mapping(string => Candidate) candidates;
   mapping(string => City) cities;
@@ -90,6 +123,16 @@ contract Elections {
       electoralNumber,
       true
     );
+
+    emit CreatedCandidateEvent(
+      ullName,
+      birthDate,
+      politicalParty,
+      position,
+      state,
+      city,
+      electoralNumber
+    );
   }
 
   function getCandidate(string memory number) 
@@ -127,8 +170,8 @@ contract Elections {
   ) public onlyOwner {
 
     require(!cities[cityName].initialized, "The city name must be unique");
-
     cities[cityName] = City(cityName, true);
+    emit CreatedCityEvent(cityName);
   }
 
   function getCity(string memory cityName) 
@@ -153,8 +196,10 @@ contract Elections {
     string memory electoralNumber,
     string memory fullName
   ) public onlyOwner {
+
     require(!electoralTitles[electoralNumber].initialized, "Electoral number must be unique");
     electoralTitles[electoralNumber] = ElectoralTitleData(electoralNumber, fullName, true);
+    emit CreatedElectoralTitleDataEvent(electoralNumber, fullName);
   }
 
   function getElectoralTitle(string memory number) 
@@ -182,6 +227,7 @@ contract Elections {
   
     require(!politicalParties[name].initialized, "The political party must be unique");
     politicalParties[name] = PoliticalParty(name, true);
+    emit CreatedPoliticalPartyEvent(name);
   }
 
   function getPoliticalParty(string memory politicalPartyName) 
@@ -207,6 +253,7 @@ contract Elections {
 
     require(!positions[position].initialized, "The position must be unique");
     positions[position] = Position(position, true);
+    emit CreatedPositionEvent(position);
   }
 
   function getPosition(string memory positionName) 
@@ -232,6 +279,7 @@ contract Elections {
 
     require(!states[stateName].initialized, "The state name must be unique");
     states[stateName] = State(stateName, true);
+    emit CreatedStateEvent(stateName);
   }
 
   function getState(string memory stateName) 
