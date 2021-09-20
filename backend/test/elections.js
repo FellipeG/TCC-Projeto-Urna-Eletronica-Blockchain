@@ -219,4 +219,72 @@ contract("Elections", accounts => {
 
   });
 
+  describe('Títulos Eleitorais', () => {
+    const electoralTitleObj = {
+      number: '00123456789',
+      fullName: 'Nome Complexo'
+    };
+
+    it('1. O título eleitoral não deve ser cadastrado por um usuário não autorizado', () => {
+        return Elections.deployed()
+        .then((instance) => {
+          return instance.addElectoralTitle(
+            electoralTitleObj.number,
+            electoralTitleObj.fullName,
+            { from: accounts[1] }
+          );
+        })
+        .then(assert.fail)
+        .catch((e) => {
+          assert(e.message.indexOf('Only the owner can update that information') !== -1);
+        })
+    });
+
+    it('2. O título eleitoral deve ser cadastrado', async() => {
+
+      const instance = await Elections.deployed();
+      await instance.addElectoralTitle(
+        electoralTitleObj.number,
+        electoralTitleObj.fullName,
+        { from: accounts[0] }
+      );
+
+      const electoralTitle = await instance.getElectoralTitle(electoralTitleObj.number);
+      assert.equal(electoralTitle[0], electoralTitleObj.number);
+    });
+
+    it('3. O título eleitoral não deve ser cadastrado por ser duplicado', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addElectoralTitle(
+          electoralTitleObj.number,
+          electoralTitleObj.fullName,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Electoral number must be unique') !== -1);
+      })
+    });
+
+    it('4. Deve ocorrer erro ao buscar por um título eleitoral não existente', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.getElectoralTitle('000000', { from: accounts[0] });
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Electoral title not found') !== -1);
+      })
+    });
+
+    it('5. Deve retornar sucesso ao buscar por um título eleitoral', async () => {
+      const instance = await Elections.deployed();
+      const electoralTitle = await instance.getElectoralTitle(electoralTitleObj.number);
+      assert.equal(electoralTitle[0], electoralTitleObj.number);
+    });
+
+  });
+
 });
