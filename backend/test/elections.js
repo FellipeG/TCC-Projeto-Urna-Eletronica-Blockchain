@@ -222,7 +222,7 @@ contract("Elections", accounts => {
   describe('Títulos Eleitorais', () => {
     const electoralTitleObj = {
       number: '00123456789',
-      fullName: 'Nome Complexo'
+      fullName: 'Nome Completo'
     };
 
     it('1. O título eleitoral não deve ser cadastrado por um usuário não autorizado', () => {
