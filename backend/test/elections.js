@@ -287,4 +287,232 @@ contract("Elections", accounts => {
 
   });
 
+  describe('Candidatos', () => {
+    const candidateObj = {
+      fullName: 'Nome Completo',
+      birthDate: '1970-10-22',
+      politicalParty: 'Partido X',
+      position: 'Governador',
+      state: 'RJ',
+      city: 'Rio de Janeiro',
+      electoralNumber: '44'
+    };
+
+    it('1. O candidato não deve ser cadastrado por um usuário não autorizado', () => {
+        return Elections.deployed()
+        .then((instance) => {
+          return instance.addCandidate(
+            candidateObj.fullName,
+            candidateObj.birthDate,
+            candidateObj.politicalParty,
+            candidateObj.position,
+            candidateObj.state,
+            candidateObj.city,
+            candidateObj.electoralNumber,
+            { from: accounts[1] }
+          );
+        })
+        .then(assert.fail)
+        .catch((e) => {
+          assert(e.message.indexOf('Only the owner can update that information') !== -1);
+        })
+    });
+
+    it('2. O candidato não deve ser cadastrado por ter um partido político inválido', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addCandidate(
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          'Partido Y',
+          candidateObj.position,
+          candidateObj.state,
+          candidateObj.city,
+          candidateObj.electoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Political party not found') !== -1);
+      })
+    });
+
+    it('3. O candidato não deve ser cadastrado por ter um cargo inválido', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addCandidate(
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          'Cargo inválido',
+          candidateObj.state,
+          candidateObj.city,
+          candidateObj.electoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Position not found') !== -1);
+      })
+    });
+
+    it('4. O candidato não deve ser cadastrado por ter um estado inválido', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addCandidate(
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          candidateObj.position,
+          'MT',
+          candidateObj.city,
+          candidateObj.electoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('State not found') !== -1);
+      })
+    });
+
+    it('5. O candidato não deve ser cadastrado por ter uma cidade inválida', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addCandidate(
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          candidateObj.position,
+          candidateObj.state,
+          'Mato Grosso',
+          candidateObj.electoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('City not found') !== -1);
+      })
+    });
+
+    it('6. O candidato deve ser cadastrado', async() => {
+
+      const instance = await Elections.deployed();
+      await instance.addCandidate(
+        candidateObj.fullName,
+        candidateObj.birthDate,
+        candidateObj.politicalParty,
+        candidateObj.position,
+        candidateObj.state,
+        candidateObj.city,
+        candidateObj.electoralNumber,
+        { from: accounts[0] }
+      );
+
+      const candidate = await instance.getCandidate(candidateObj.electoralNumber);
+      assert.equal(candidate[6], candidateObj.electoralNumber);
+    });
+
+    it('7. O candidato deve ser cadastrado com estado em branco', async() => {
+
+      const electoralNumber = '00001';
+
+      const instance = await Elections.deployed();
+      await instance.addCandidate(
+        candidateObj.fullName,
+        candidateObj.birthDate,
+        candidateObj.politicalParty,
+        candidateObj.position,
+        '',
+        candidateObj.city,
+        electoralNumber,
+        { from: accounts[0] }
+      );
+
+      const candidate = await instance.getCandidate(electoralNumber);
+      assert.equal(candidate[6], electoralNumber);
+    });
+
+    it('8. O candidato deve ser cadastrado com cidade em branco', async() => {
+
+      const electoralNumber = '00002';
+
+      const instance = await Elections.deployed();
+      await instance.addCandidate(
+        candidateObj.fullName,
+        candidateObj.birthDate,
+        candidateObj.politicalParty,
+        candidateObj.position,
+        candidateObj.state,
+        '',
+        electoralNumber,
+        { from: accounts[0] }
+      );
+
+      const candidate = await instance.getCandidate(electoralNumber);
+      assert.equal(candidate[6], electoralNumber);
+    });
+
+    it('9. O candidato deve ser cadastrado com cidade e estado em branco', async() => {
+
+      const electoralNumber = '00003';
+
+      const instance = await Elections.deployed();
+      await instance.addCandidate(
+        candidateObj.fullName,
+        candidateObj.birthDate,
+        candidateObj.politicalParty,
+        candidateObj.position,
+        '',
+        '',
+        electoralNumber,
+        { from: accounts[0] }
+      );
+
+      const candidate = await instance.getCandidate(electoralNumber);
+      assert.equal(candidate[6], electoralNumber);
+    });
+
+    it('10. O candidato não deve ser cadastrado por ser duplicado', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addCandidate(
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          candidateObj.position,
+          candidateObj.state,
+          candidateObj.city,
+          candidateObj.electoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('The electoral number must be unique') !== -1);
+      })
+    });
+
+    it('11. Deve ocorrer erro ao buscar por um candidato não existente', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.getCandidate('000000', { from: accounts[0] });
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Candidate not found') !== -1);
+      })
+    });
+
+    it('12. Deve retornar sucesso ao buscar por um candidato', async () => {
+      const instance = await Elections.deployed();
+      const candidate = await instance.getCandidate(candidateObj.electoralNumber);
+      assert.equal(candidate[6], candidateObj.electoralNumber);
+    });
+
+  });
+
 });
