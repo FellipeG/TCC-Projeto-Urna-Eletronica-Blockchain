@@ -58,6 +58,59 @@ contract("Elections", accounts => {
       assert.equal(city, name);
     });
 
-  })
+  });
+
+  describe('Estados', () => {
+    const name = 'RJ';
+
+    it('1. O estado não deve ser cadastrado por um usuário não autorizado', () => {
+        return Elections.deployed()
+        .then((instance) => {
+          return instance.addState(name, { from: accounts[1] });
+        })
+        .then(assert.fail)
+        .catch((e) => {
+          assert(e.message.indexOf('Only the owner can update that information') !== -1);
+        })
+    });
+
+    it('2. O estado deve ser cadastrado', async() => {
+
+      const instance = await Elections.deployed();
+      await instance.addState(name, { from: accounts[0] });
+
+      const state = await instance.getState(name);
+      assert.equal(state, name);
+    });
+
+    it('3. O estado não deve ser cadastrado por ser duplicado', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addState(name, { from: accounts[0] });
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('The state name must be unique') !== -1);
+      })
+    });
+
+    it('4. Deve ocorrer erro ao buscar por um estado não existente', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.getState('MT', { from: accounts[0] });
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('State not found') !== -1);
+      })
+    });
+
+    it('5. Deve retornar sucesso ao buscar por um estado existente', async () => {
+      const instance = await Elections.deployed();
+      const state = await instance.getState(name);
+      assert.equal(state, name);
+    });
+
+  });
 
 });
