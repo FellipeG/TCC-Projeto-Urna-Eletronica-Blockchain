@@ -166,4 +166,57 @@ contract("Elections", accounts => {
 
   });
 
+  describe('Partidos Políticos', () => {
+    const name = 'Partido X';
+
+    it('1. O partido político não deve ser cadastrado por um usuário não autorizado', () => {
+        return Elections.deployed()
+        .then((instance) => {
+          return instance.addPoliticalParty(name, { from: accounts[1] });
+        })
+        .then(assert.fail)
+        .catch((e) => {
+          assert(e.message.indexOf('Only the owner can update that information') !== -1);
+        })
+    });
+
+    it('2. O partido político deve ser cadastrado', async() => {
+
+      const instance = await Elections.deployed();
+      await instance.addPoliticalParty(name, { from: accounts[0] });
+
+      const politicalParty = await instance.getPoliticalParty(name);
+      assert.equal(politicalParty, name);
+    });
+
+    it('3. O partido político não deve ser cadastrado por ser duplicado', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addPoliticalParty(name, { from: accounts[0] });
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('The political party must be unique') !== -1);
+      })
+    });
+
+    it('4. Deve ocorrer erro ao buscar por um partido político não existente', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.getPoliticalParty('Partido Y', { from: accounts[0] });
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Political party not found') !== -1);
+      })
+    });
+
+    it('5. Deve retornar sucesso ao buscar por um partido político existente', async () => {
+      const instance = await Elections.deployed();
+      const policicalParty = await instance.getPoliticalParty(name);
+      assert.equal(policicalParty, name);
+    });
+
+  });
+
 });
