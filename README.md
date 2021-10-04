@@ -13,7 +13,3 @@ Este projeto destina-se a implementar um sistema de urna eletrônica que utilize
 Instalar o metamask no navegador através da URL:
 
 https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn
-
-Senha
-
-Senh@TCC
