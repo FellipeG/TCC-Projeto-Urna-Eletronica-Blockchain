@@ -9,6 +9,7 @@ services:
         tty: true
         ports: 
             - "8080:8080"
+            - "8545:8545"
         volumes: 
             - ./:/var/www
         networks: 
