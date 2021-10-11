@@ -7,9 +7,10 @@ import Landing from "./views/Landing.vue";
 import Login from "./views/Login.vue";
 import Register from "./views/Register.vue";
 import Profile from "./views/Profile.vue";
-import Home from "./views/home/Home.vue";
-import Candidates from "./views/candidates/Candidates.vue";
-import Cities from "./views/cities/Cities.vue";
+import Home from "./views/home/Home";
+import Candidates from "./views/candidates/Candidates";
+import Cities from "./views/cities/Cities";
+import CreateCity from "./views/cities/CreateCity";
 
 Vue.use(Router);
 
@@ -40,6 +41,15 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Cities,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/cidades/criar",
+      name: "Cadastrar Cidade",
+      components: {
+        header: AppHeader,
+        default: CreateCity,
         footer: AppFooter
       }
     },
