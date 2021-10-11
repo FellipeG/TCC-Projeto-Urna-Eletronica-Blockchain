@@ -1,6 +1,8 @@
 <template>
         <div class="container pt-150">
-            <base-button type="primary" outline class="float-right mb-2">Cadastrar Cidade</base-button>
+            <router-link to="/cidades/criar">
+                <base-button type="primary" outline icon="fa fa-plus" class="float-right mb-2">Cadastrar Cidade</base-button>
+            </router-link>
             <table class="table table-striped">
                 <thead>
                     <tr>
