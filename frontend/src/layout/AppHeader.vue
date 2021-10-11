@@ -7,9 +7,9 @@
             :expand="true">
                 <ul class="navbar-nav ml-lg-auto">
                     <li class="nav-item">
-                        <a class="nav-link nav-link-icon" href="#">
+                        <router-link class="nav-link nav-link-icon" to="/">
                             Home
-                        </a>
+                        </router-link>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link nav-link-icon" href="#">
@@ -17,7 +17,7 @@
                         </a>
                     </li>
                     <base-dropdown tag="li" title="Admin">
-                        <a class="dropdown-item" href="#">Gerenciar Candidatos</a>
+                        <router-link to="/candidatos" class="dropdown-item">Gerenciar Candidatos</router-link>
                         <a class="dropdown-item" href="#">Gerenciar Partidos Políticos</a>
                         <a class="dropdown-item" href="#">Gerenciar Cargos Políticos</a>
                         <div class="dropdown-divider"></div>
@@ -25,7 +25,7 @@
                         <a class="dropdown-item" href="#">Gerenciar Estados</a>
                     </base-dropdown>
                 </ul>
-            </base-nav>
+        </base-nav>
     </div>
 </template>
 <script>

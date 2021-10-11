@@ -8,6 +8,8 @@ import Login from "./views/Login.vue";
 import Register from "./views/Register.vue";
 import Profile from "./views/Profile.vue";
 import Home from "./views/home/Home.vue";
+import Candidates from "./views/candidates/Candidates.vue";
+import Cities from "./views/cities/Cities.vue";
 
 Vue.use(Router);
 
@@ -20,6 +22,24 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Home,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/candidatos",
+      name: "Candidatos",
+      components: {
+        header: AppHeader,
+        default: Candidates,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/cidades",
+      name: "Cidades",
+      components: {
+        header: AppHeader,
+        default: Cities,
         footer: AppFooter
       }
     },
