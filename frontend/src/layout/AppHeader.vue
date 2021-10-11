@@ -21,7 +21,7 @@
                         <a class="dropdown-item" href="#">Gerenciar Partidos Políticos</a>
                         <a class="dropdown-item" href="#">Gerenciar Cargos Políticos</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Gerenciar Cidades</a>
+                        <router-link to="/cidades" class="dropdown-item">Gerenciar Cidades</router-link>
                         <a class="dropdown-item" href="#">Gerenciar Estados</a>
                     </base-dropdown>
                 </ul>
