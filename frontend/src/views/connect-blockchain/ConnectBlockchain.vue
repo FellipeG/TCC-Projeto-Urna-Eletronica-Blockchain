@@ -25,7 +25,7 @@ import Web3Service from "@/services/Web3Service";
 import ContractService from "@/services/ContractService";
 
 export default {
-    name: "StatusBar",
+    name: "ConnectBlockchain",
     props: {},
     data() {
         return {

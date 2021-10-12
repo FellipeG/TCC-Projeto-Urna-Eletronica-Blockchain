@@ -6,18 +6,30 @@ class CityService
         this.accountAddress = accountAddress;
     }
 
-    async index()
+    async index(page, perPage)
     {
         try {
+            let endPosition = page * perPage;
+            const initialPosition = endPosition - perPage;
+
+            const total = await this.contract.methods.getCityCount().call();
+
+            if (endPosition > total) {
+                endPosition = total;
+            }
+            
             const cityArray = [];
-            const cityIndexCount = await this.contract.methods.getCityCount().call();
-            for(let i=0; i<cityIndexCount; i++) {
+            for(let i=initialPosition; i<endPosition; i++) {
                 const cityAddress = await this.contract.methods.getCityAtIndex(i).call();
                 const cityObj = await this.contract.methods.getCity(cityAddress).call();
                 cityArray.push(cityObj);
             }
 
-            return cityArray;
+            
+            return {
+                total: total,
+                data: cityArray
+            }
         } catch(e) {
             throw e;
         }

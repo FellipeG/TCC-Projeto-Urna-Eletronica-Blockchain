@@ -9,8 +9,8 @@
                         <th>Nome</th>
                     </tr>
                 </thead>
-                <tbody v-if="cities.length">
-                    <tr v-for="city in cities" :key="city">
+                <tbody v-if="cities && cities.data.length">
+                    <tr v-for="city in cities.data" :key="city">
                         <td>{{ city }}</td>
                     </tr>
                 </tbody>
@@ -21,7 +21,12 @@
                 </tbody>
             </table>
             <div>
-                <base-pagination :total="cities.length" align="center"></base-pagination>
+                <base-pagination
+                    :total="(cities) ? parseInt(cities.total) : 0"
+                    :perPage="perPage"
+                    :value="page"
+                    align="center"
+                    @input="setPage"></base-pagination>
             </div>
         </div>
 </template>
@@ -36,12 +41,13 @@ import CityService from "@/services/CityService";
 export default {
     data() {
         return {
-            cities: []
+            cities: null,
+            page: 1,
+            perPage: 10
         }
     },
     async created() {
-        const cities = await this.index();
-        this.cities = cities;
+        this.cities = await this.index();
     },
     methods: {
         getService() {
@@ -53,7 +59,11 @@ export default {
         },
         async index() {
             const service = this.getService();
-            return service.index();
+            return service.index(this.page, this.perPage);
+        },
+        async setPage(page) {
+            this.page = page;
+            this.cities = await this.index();
         }
     },
     components: {

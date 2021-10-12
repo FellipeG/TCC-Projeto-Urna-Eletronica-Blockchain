@@ -12,6 +12,11 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
+                        <router-link class="nav-link nav-link-icon" to="/conectar_blockchain">
+                            Conectar ao Blockchain
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link nav-link-icon" href="#">
                             Votar
                         </a>
