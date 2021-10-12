@@ -13,6 +13,8 @@ import Cities from "./views/cities/Cities";
 import CreateCity from "./views/cities/CreateCity";
 import States from "./views/states/States";
 import CreateState from "./views/states/CreateState";
+import Positions from "./views/positions/Positions";
+import CreatePosition from "./views/positions/CreatePosition";
 import ConnectBlockchain from "./views/connect-blockchain/ConnectBlockchain";
 
 Vue.use(Router);
@@ -80,6 +82,24 @@ export default new Router({
       components: {
         header: AppHeader,
         default: CreateState,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/cargos_politicos",
+      name: "Cargos Políticos",
+      components: {
+        header: AppHeader,
+        default: Positions,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/cargos_politicos/criar",
+      name: "Cadastrar Cargo Político",
+      components: {
+        header: AppHeader,
+        default: CreatePosition,
         footer: AppFooter
       }
     },

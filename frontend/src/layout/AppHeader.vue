@@ -24,7 +24,7 @@
                     <base-dropdown tag="li" title="Admin">
                         <router-link to="/candidatos" class="dropdown-item">Gerenciar Candidatos</router-link>
                         <a class="dropdown-item" href="#">Gerenciar Partidos Políticos</a>
-                        <a class="dropdown-item" href="#">Gerenciar Cargos Políticos</a>
+                        <router-link to="/cargos_politicos" class="dropdown-item">Gerenciar Cargos Políticos</router-link>
                         <div class="dropdown-divider"></div>
                         <router-link to="/cidades" class="dropdown-item">Gerenciar Cidades</router-link>
                         <router-link to="/estados" class="dropdown-item">Gerenciar Estados</router-link>

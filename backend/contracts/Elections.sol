@@ -46,6 +46,7 @@ contract Elections {
   //arrays
   string[] cityIndex;
   string[] stateIndex;
+  string[] positionIndex;
 
   //events
   event CreatedCandidateEvent(
@@ -274,6 +275,7 @@ contract Elections {
 
     require(!positions[position].initialized, "The position must be unique");
     positions[position] = Position(position, true);
+    positionIndex.push(position);
     emit CreatedPositionEvent(position);
   }
 
@@ -290,6 +292,22 @@ contract Elections {
     return(
       position.name
     );
+  }
+
+  function getPositionCount()
+    public
+    view
+    returns(uint count)
+  {
+    return positionIndex.length;
+  }
+
+  function getPositionAtIndex(uint index)
+    public
+    view
+    returns(string memory positionAddress)
+  {
+    return positionIndex[index];
   }
 
   // State methods
