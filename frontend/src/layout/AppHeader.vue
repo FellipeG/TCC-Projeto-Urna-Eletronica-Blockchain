@@ -27,7 +27,7 @@
                         <a class="dropdown-item" href="#">Gerenciar Cargos Políticos</a>
                         <div class="dropdown-divider"></div>
                         <router-link to="/cidades" class="dropdown-item">Gerenciar Cidades</router-link>
-                        <a class="dropdown-item" href="#">Gerenciar Estados</a>
+                        <router-link to="/estados" class="dropdown-item">Gerenciar Estados</router-link>
                     </base-dropdown>
                 </ul>
         </base-nav>

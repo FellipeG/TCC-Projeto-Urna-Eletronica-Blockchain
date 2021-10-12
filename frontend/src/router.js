@@ -11,6 +11,8 @@ import Home from "./views/home/Home";
 import Candidates from "./views/candidates/Candidates";
 import Cities from "./views/cities/Cities";
 import CreateCity from "./views/cities/CreateCity";
+import States from "./views/states/States";
+import CreateState from "./views/states/CreateState";
 import ConnectBlockchain from "./views/connect-blockchain/ConnectBlockchain";
 
 Vue.use(Router);
@@ -60,6 +62,24 @@ export default new Router({
       components: {
         header: AppHeader,
         default: CreateCity,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/estados",
+      name: "Estados",
+      components: {
+        header: AppHeader,
+        default: States,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/estados/criar",
+      name: "Cadastrar Estado",
+      components: {
+        header: AppHeader,
+        default: CreateState,
         footer: AppFooter
       }
     },

@@ -45,6 +45,7 @@ contract Elections {
 
   //arrays
   string[] cityIndex;
+  string[] stateIndex;
 
   //events
   event CreatedCandidateEvent(
@@ -299,6 +300,7 @@ contract Elections {
 
     require(!states[stateName].initialized, "The state name must be unique");
     states[stateName] = State(stateName, true);
+    stateIndex.push(stateName);
     emit CreatedStateEvent(stateName);
   }
 
@@ -315,6 +317,22 @@ contract Elections {
     return(
       state.name
     );
+  }
+
+  function getStateCount()
+    public
+    view
+    returns(uint count)
+  {
+    return stateIndex.length;
+  }
+
+  function getStateAtIndex(uint index)
+    public
+    view
+    returns(string memory stateAddress)
+  {
+    return stateIndex[index];
   }
 
   /***************************
