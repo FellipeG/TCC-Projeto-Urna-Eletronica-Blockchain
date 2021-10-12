@@ -15,6 +15,8 @@ import States from "./views/states/States";
 import CreateState from "./views/states/CreateState";
 import Positions from "./views/positions/Positions";
 import CreatePosition from "./views/positions/CreatePosition";
+import PoliticalParties from "./views/political-parties/PoliticalParties";
+import CreatePoliticalParty from "./views/political-parties/CreatePoliticalParty";
 import ConnectBlockchain from "./views/connect-blockchain/ConnectBlockchain";
 
 Vue.use(Router);
@@ -100,6 +102,24 @@ export default new Router({
       components: {
         header: AppHeader,
         default: CreatePosition,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/partidos_politicos",
+      name: "Partidos Políticos",
+      components: {
+        header: AppHeader,
+        default: PoliticalParties,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/partidos_politicos/criar",
+      name: "Cadastrar Partidos Políticos",
+      components: {
+        header: AppHeader,
+        default: CreatePoliticalParty,
         footer: AppFooter
       }
     },

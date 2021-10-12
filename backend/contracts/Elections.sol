@@ -47,6 +47,7 @@ contract Elections {
   string[] cityIndex;
   string[] stateIndex;
   string[] positionIndex;
+  string[] politicalPartyIndex;
 
   //events
   event CreatedCandidateEvent(
@@ -249,6 +250,7 @@ contract Elections {
   
     require(!politicalParties[name].initialized, "The political party must be unique");
     politicalParties[name] = PoliticalParty(name, true);
+    politicalPartyIndex.push(name);
     emit CreatedPoliticalPartyEvent(name);
   }
 
@@ -265,6 +267,22 @@ contract Elections {
     return(
       politicalParty.name
     );
+  }
+
+  function getPoliticalPartyCount()
+    public
+    view
+    returns(uint count)
+  {
+    return politicalPartyIndex.length;
+  }
+
+  function getPoliticalPartyAtIndex(uint index)
+    public
+    view
+    returns(string memory politicalPartyAddress)
+  {
+    return politicalPartyIndex[index];
   }
 
   // Position methods
