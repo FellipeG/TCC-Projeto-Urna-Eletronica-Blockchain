@@ -19,6 +19,7 @@ for i in "${OPT[@]}"; do
         truffle migrate 
         cd ../frontend
         echo "Iniciando o projeto em VueJS"
+        npm install
         npm run serve &
         cd ../
     elif [ $i -eq "2" ]
