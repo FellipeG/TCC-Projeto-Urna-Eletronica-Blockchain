@@ -15,9 +15,9 @@ export default async () => {
         })
 
         try {
-            let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-
-            accountAddress = accounts[0]
+            let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            accountAddress = accounts[0];
+            console.log(`ACCOUNT: ${accountAddress}`)
         } catch (err) {
 
             if (err.code === 4001) {

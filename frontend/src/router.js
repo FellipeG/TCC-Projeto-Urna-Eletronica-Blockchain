@@ -11,12 +11,22 @@ import Home from "./views/home/Home";
 import Candidates from "./views/candidates/Candidates";
 import Cities from "./views/cities/Cities";
 import CreateCity from "./views/cities/CreateCity";
+import StatusBar from "./views/status-bar/StatusBar";
 
 Vue.use(Router);
 
 export default new Router({
   linkExactActiveClass: "active",
   routes: [
+    {
+      path: "/statusbar",
+      name: "StatusBar",
+      components: {
+        header: AppHeader,
+        default: StatusBar,
+        footer: AppFooter
+      }
+    },
     {
       path: "/",
       name: "Início",

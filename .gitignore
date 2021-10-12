@@ -1,2 +1,3 @@
 nohup.out
 backend/build/contracts/*
+node_modules

@@ -43,6 +43,9 @@ contract Elections {
     bool initialized;
   }
 
+  //arrays
+  string[] cityIndex;
+
   //events
   event CreatedCandidateEvent(
     string fullName,
@@ -171,6 +174,7 @@ contract Elections {
 
     require(!cities[cityName].initialized, "The city name must be unique");
     cities[cityName] = City(cityName, true);
+    cityIndex.push(cityName);
     emit CreatedCityEvent(cityName);
   }
 
@@ -188,6 +192,22 @@ contract Elections {
       city.name
     );
 
+  }
+
+  function getCityCount()
+    public
+    view
+    returns(uint count)
+  {
+    return cityIndex.length;
+  }
+
+  function getCityAtIndex(uint index)
+    public
+    view
+    returns(string memory cityAddress)
+  {
+    return cityIndex[index];
   }
 
   // Electoral Title methods
