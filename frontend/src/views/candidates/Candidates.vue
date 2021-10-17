@@ -16,7 +16,7 @@
                 </tbody>
                 <tbody v-else>
                     <tr>
-                        <td>Nenhuma candidato cadastrada</td>
+                        <td>Nenhuma candidato cadastrado</td>
                     </tr>
                 </tbody>
             </table>

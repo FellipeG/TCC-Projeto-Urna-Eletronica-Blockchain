@@ -25,6 +25,19 @@
                 </div>
             </div>
             <div class="row">
+                <div class="col-6">
+                    <base-select v-model="position" :options="positions" label="Cargo" :required="true"></base-select>
+                </div>
+                <div class="col-6">
+                    <base-select v-model="politicalParty" :options="politicalParties" label="Partido Político" :required="true"></base-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <base-input v-model="electoralNumber" type="number" label="Número Eleitoral" :required="true"></base-input>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-12">
                     <base-button type="success" @click="add" :block="true">
                         Cadastrar
@@ -42,6 +55,8 @@ import BaseSelect from '@/components/BaseSelect';
 import { eventHub } from "@/main";
 import CityService from "@/services/CityService";
 import StateService from "@/services/StateService";
+import PositionService from "@/services/PositionService";
+import PoliticalPartyService from "@/services/PoliticalPartyService";
 
 export default {
     data() {
@@ -51,14 +66,20 @@ export default {
             birthDate: null,
             city: null,
             state: null,
+            position: null,
+            ṕoliticalParty: null,
 
             cities: [],
-            states: []
+            states: [],
+            positions: [],
+            politicalParties: [],
         }
     },
     async created() {
         this.cities = await this.getCityService().getAll();
         this.states = await this.getStateService().getAll();
+        this.positions = await this.getPositionService().getAll();
+        this.politicalParties = await this.getPoliticalPartyService().getAll();
     },
     methods: {
         getCityService() {
@@ -70,6 +91,20 @@ export default {
         },
         getStateService() {
             return new StateService(
+                this.$store.state.web3,
+                this.$store.state.contract,
+                this.$store.state.accountAddress
+            )
+        },
+        getPositionService() {
+            return new PositionService(
+                this.$store.state.web3,
+                this.$store.state.contract,
+                this.$store.state.accountAddress
+            )
+        },
+        getPoliticalPartyService() {
+            return new PoliticalPartyService(
                 this.$store.state.web3,
                 this.$store.state.contract,
                 this.$store.state.accountAddress
