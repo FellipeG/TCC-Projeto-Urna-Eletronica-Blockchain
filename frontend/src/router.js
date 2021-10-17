@@ -9,6 +9,7 @@ import Register from "./views/Register.vue";
 import Profile from "./views/Profile.vue";
 import Home from "./views/home/Home";
 import Candidates from "./views/candidates/Candidates";
+import CreateCandidate from './views/candidates/CreateCandidate';
 import Cities from "./views/cities/Cities";
 import CreateCity from "./views/cities/CreateCity";
 import States from "./views/states/States";
@@ -48,6 +49,15 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Candidates,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/candidatos/criar",
+      name: "Cadastrar Candidatos",
+      components: {
+        header: AppHeader,
+        default: CreateCandidate,
         footer: AppFooter
       }
     },
