@@ -35,6 +35,26 @@ class PoliticalPartyService
         }
     }
 
+    async getAll()
+    {
+        try {
+
+            const total = await this.contract.methods.getPoliticalPartyCount().call();
+            
+            const politicalPartyArray = [];
+            for(let i=0; i<total; i++) {
+                const politicalPartyAddress = await this.contract.methods.getPoliticalPartyAtIndex(i).call();
+                const politicalPartyObj = await this.contract.methods.getPoliticalParty(politicalPartyAddress).call();
+                politicalPartyArray.push(politicalPartyObj);
+            }
+
+            
+            return politicalPartyArray;
+        } catch(e) {
+            throw e;
+        }
+    }
+
     async add(politicalPartyName) {
 
         try {

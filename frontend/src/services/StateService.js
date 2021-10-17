@@ -35,6 +35,26 @@ class StateService
         }
     }
 
+    async getAll()
+    {
+        try {
+
+            const total = await this.contract.methods.getStateCount().call();
+
+            const stateArray = [];
+            for(let i=0; i<total; i++) {
+                const stateAddress = await this.contract.methods.getStateAtIndex(i).call();
+                const stateObj = await this.contract.methods.getState(stateAddress).call();
+                stateArray.push(stateObj);
+            }
+
+            
+            return stateArray;
+        } catch(e) {
+            throw e;
+        }
+    }
+
     async add(stateName) {
 
         try {

@@ -1,4 +1,4 @@
-class CityService
+class CityService 
 {
     constructor(web3, contract, accountAddress) {
         this.web3 = web3;
@@ -30,6 +30,26 @@ class CityService
                 total: total,
                 data: cityArray
             }
+        } catch(e) {
+            throw e;
+        }
+    }
+
+    async getAll()
+    {
+        try {
+
+            const total = await this.contract.methods.getCityCount().call();
+            
+            const cityArray = [];
+            for(let i=0; i<total; i++) {
+                const cityAddress = await this.contract.methods.getCityAtIndex(i).call();
+                const cityObj = await this.contract.methods.getCity(cityAddress).call();
+                cityArray.push(cityObj);
+            }
+
+            
+            return cityArray;
         } catch(e) {
             throw e;
         }

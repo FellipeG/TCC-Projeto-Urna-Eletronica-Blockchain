@@ -35,6 +35,26 @@ class PositionService
         }
     }
 
+    async getAll()
+    {
+        try {
+
+            const total = await this.contract.methods.getPositionCount().call();
+            
+            const positionArray = [];
+            for(let i=0; i<total; i++) {
+                const positionAddress = await this.contract.methods.getPositionAtIndex(i).call();
+                const positionObj = await this.contract.methods.getPosition(positionAddress).call();
+                positionArray.push(positionObj);
+            }
+
+            
+            return positionArray;
+        } catch(e) {
+            throw e;
+        }
+    }
+
     async add(positionName) {
 
         try {
