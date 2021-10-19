@@ -22,12 +22,6 @@ contract Elections {
     bool initialized;
   }
 
-  struct ElectoralTitleData {
-    string electoralNumber;
-    string fullName;
-    bool initialized;
-  }
-
   struct PoliticalParty {
     string name;
     bool initialized;
@@ -48,6 +42,7 @@ contract Elections {
   string[] stateIndex;
   string[] positionIndex;
   string[] politicalPartyIndex;
+  string[] candidateIndex;
 
   //events
   event CreatedCandidateEvent(
@@ -64,11 +59,6 @@ contract Elections {
     string name
   );
 
-  event CreatedElectoralTitleDataEvent(
-    string electoralNumber,
-    string fullName
-  );
-
   event CreatedPoliticalPartyEvent(
     string name
   );
@@ -83,7 +73,6 @@ contract Elections {
 
   mapping(string => Candidate) candidates;
   mapping(string => City) cities;
-  mapping(string => ElectoralTitleData) electoralTitles;
   mapping(string => PoliticalParty) politicalParties;
   mapping(string => Position) positions;
   mapping(string => State) states;
@@ -130,6 +119,8 @@ contract Elections {
       true
     );
 
+    candidateIndex.push(electoralNumber);
+
     emit CreatedCandidateEvent(
       fullName,
       birthDate,
@@ -167,6 +158,22 @@ contract Elections {
       candidate.electoralNumber
     );
     
+  }
+
+  function getCandidateCount()
+    public
+    view
+    returns(uint count)
+  {
+    return candidateIndex.length;
+  }
+
+  function getCandidateAtIndex(uint index)
+    public
+    view
+    returns(string memory candidateAddress)
+  {
+    return candidateIndex[index];
   }
 
   // City methods
@@ -211,35 +218,6 @@ contract Elections {
     returns(string memory cityAddress)
   {
     return cityIndex[index];
-  }
-
-  // Electoral Title methods
-
-  function addElectoralTitle(
-    string memory electoralNumber,
-    string memory fullName
-  ) public onlyOwner {
-
-    require(!electoralTitles[electoralNumber].initialized, "Electoral number must be unique");
-    electoralTitles[electoralNumber] = ElectoralTitleData(electoralNumber, fullName, true);
-    emit CreatedElectoralTitleDataEvent(electoralNumber, fullName);
-  }
-
-  function getElectoralTitle(string memory number) 
-    public
-    view
-    returns (
-      string memory electoralNumber,
-      string memory fullName
-    )
-  {
-    ElectoralTitleData memory electoralTitle = electoralTitles[number];
-    require(electoralTitle.initialized, "Electoral title not found");
-
-    return(
-      electoralTitle.electoralNumber,
-      electoralTitle.fullName
-    );
   }
 
   // Political Party methods

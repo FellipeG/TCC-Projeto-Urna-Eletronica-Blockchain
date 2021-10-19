@@ -1,7 +1,7 @@
 <template>
     <div class="form-group" :class="[{'has-label': label}]">
         <label v-if="label">{{ label }} <span v-if="required">*</span></label>
-        <v-select v-model="model" :options="options" class="style-chooser" v-bind="$attrs"></v-select>
+        <v-select @input="updateValue" :options="options" class="style-chooser" v-bind="$attrs"></v-select>
     </div>
 </template>
 
@@ -10,7 +10,6 @@
 export default {
     data() {
         return {
-            model: null
         }
     },
     props: {
@@ -28,6 +27,11 @@ export default {
             type: Array,
             description: "Define as options do select",
         },
+    },
+    methods: {
+        updateValue(value) {
+            this.$emit('input', value);
+        }
     }
 }
 </script>

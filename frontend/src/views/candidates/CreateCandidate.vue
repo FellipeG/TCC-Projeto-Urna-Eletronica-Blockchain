@@ -57,17 +57,19 @@ import CityService from "@/services/CityService";
 import StateService from "@/services/StateService";
 import PositionService from "@/services/PositionService";
 import PoliticalPartyService from "@/services/PoliticalPartyService";
+import CandidateService from "@/services/CandidateService";
 
 export default {
     data() {
         return {
 
-            fullName: null,
-            birthDate: null,
-            city: null,
-            state: null,
-            position: null,
-            ṕoliticalParty: null,
+            fullName: '',
+            birthDate: '',
+            city: '',
+            state: '',
+            position: '',
+            politicalParty: '',
+            electoralNumber: '',
 
             cities: [],
             states: [],
@@ -110,10 +112,34 @@ export default {
                 this.$store.state.accountAddress
             )
         },
+        getCandidateService() {
+            return new CandidateService(
+                this.$store.state.web3,
+                this.$store.state.contract,
+                this.$store.state.accountAddress
+            )
+        },
         async add() {
-            const service = this.getService();
-            service.add(this.cityName);
+            const service = this.getCandidateService();
+            service.add(
+                this.fullName,
+                this.birthDate,
+                this.politicalParty,
+                this.position,
+                this.state,
+                this.city,
+                this.electoralNumber
+            );
             this.clearInput();
+        },
+        clearInput() {
+            this.fullName = '';
+            this.birthDate = '';
+            this.politicalParty = '';
+            this.position = '';
+            this.state = '';
+            this.city = '';
+            this.electoralNumber = '';
         }
     },
     components: {

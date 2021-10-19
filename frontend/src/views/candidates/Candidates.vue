@@ -6,17 +6,27 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Nome</th>
+                        <th>Número Eleitoral</th>
+                        <th>Nome Completo</th>
+                        <th>Partido Político</th>
+                        <th>Cargo a Concorrer</th>
+                        <th>Estado</th>
+                        <th>Cidade</th>
                     </tr>
                 </thead>
                 <tbody v-if="candidates && candidates.data.length">
-                    <tr v-for="candidate in candidate.data" :key="candidate">
-                        <td>{{ candidate }}</td>
+                    <tr v-for="candidate in candidates.data" :key="candidate.electoralNumber">
+                        <td>{{ candidate.electoralNumber }}</td>
+                        <td>{{ candidate.fullName }}</td>
+                        <td>{{ candidate.politicalParty }}</td>
+                        <td>{{ candidate.position }}</td>
+                        <td>{{ candidate.state }}</td>
+                        <td>{{ candidate.city }}</td>
                     </tr>
                 </tbody>
                 <tbody v-else>
                     <tr>
-                        <td>Nenhuma candidato cadastrado</td>
+                        <td>Nenhum candidato cadastrado</td>
                     </tr>
                 </tbody>
             </table>
@@ -36,7 +46,7 @@
 import BasePagination from "@/components/BasePagination";
 import BaseButton from "@/components/BaseButton";
 import { eventHub } from "@/main";
-import CityService from "@/services/CityService";
+import CandidateService from "@/services/CandidateService";
 
 export default {
     data() {
@@ -51,7 +61,7 @@ export default {
     },
     methods: {
         getService() {
-            return new CityService(
+            return new CandidateService(
                 this.$store.state.web3,
                 this.$store.state.contract,
                 this.$store.state.accountAddress
