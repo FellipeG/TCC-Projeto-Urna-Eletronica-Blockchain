@@ -14,7 +14,7 @@ for i in "${OPT[@]}"; do
     then
         cd backend
         echo "Executando o ganache..."
-        ganache-cli -m "oppose hold method produce usual uncle flee subway climb pottery run voyage" -h 0.0.0.0 &
+        ganache-cli -m "oppose hold method produce usual uncle flee subway climb pottery run voyage" -e 90000 -h 0.0.0.0 &
         echo "Executando as migrations..."
         truffle migrate 
         cd ../frontend
