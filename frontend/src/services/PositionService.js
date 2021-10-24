@@ -1,7 +1,5 @@
 import ServiceUtils from './Utils/ServiceUtils';
 
-require('./Utils/ServiceUtils');
-
 class PositionService
 {
     constructor(web3, contract, accountAddress) {
