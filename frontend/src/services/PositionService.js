@@ -90,6 +90,21 @@ class PositionService
             throw e;
         }
     }
+
+    async destroy(position) {
+
+        try {
+
+            const response = await this.contract.methods
+                .destroyPosition(position)
+                .send({ from: this.accountAddress })
+
+            return this.utils.response(response);
+        }
+        catch (e) {
+            throw e;
+        }
+    }
 }
 
 export default PositionService;

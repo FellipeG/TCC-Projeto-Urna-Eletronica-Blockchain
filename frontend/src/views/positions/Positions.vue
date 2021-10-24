@@ -6,8 +6,8 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Nome</th>
-                        <th></th>
+                        <th width="80%">Nome</th>
+                        <th width="20%"></th>
                     </tr>
                 </thead>
                 <tbody v-if="positions && positions.data.length">
@@ -25,6 +25,7 @@
                             </router-link>
         
                             <base-button
+                                @click="openModal(position)"
                                 type="danger"
                                 outline
                                 size="md"
@@ -47,6 +48,16 @@
                     align="center"
                     @input="setPage"></base-pagination>
             </div>
+            <modal 
+                :show="showModal"
+                bodyClasses="d-none"
+                @close="closeModal">
+                <template v-slot:header><strong>Tem certeza que deseja deletar este registro?</strong></template>
+                <template v-slot:footer>
+                    <base-button type="primary" outline @click="closeModal">Cancelar</base-button>
+                    <base-button type="danger" @click="destroy()">Deletar</base-button>
+                </template>
+            </modal>
         </div>
 </template>
 
@@ -54,6 +65,7 @@
 
 import BasePagination from "@/components/BasePagination";
 import BaseButton from "@/components/BaseButton";
+import Modal from "@/components/Modal"
 import { eventHub } from "@/main";
 import PositionService from "@/services/PositionService";
 
@@ -62,7 +74,9 @@ export default {
         return {
             positions: null,
             page: 1,
-            perPage: 10
+            perPage: 10,
+            showModal: false,
+            positionToDestroy: null
         }
     },
     async created() {
@@ -83,11 +97,32 @@ export default {
         async setPage(page) {
             this.page = page;
             this.positions = await this.index();
+        },
+        openModal(position) {
+            this.setPositionToDestroy(position);
+            this.showModal = true;
+        },
+        closeModal() {
+            this.cleanPositionToDestroy();
+            this.showModal = false;
+        },
+        setPositionToDestroy(position) {
+            this.positionToDestroy = position;
+        },
+        cleanPositionToDestroy() {
+            this.positionToDestroy = null;
+        },
+        async destroy() {
+            this.getService().destroy(this.positionToDestroy);
+            this.positions = await this.index();
+            this.cleanPositionToDestroy();
+            this.closeModal();
         }
     },
     components: {
         BasePagination,
-        BaseButton
+        BaseButton,
+        Modal
     }
 }
 
