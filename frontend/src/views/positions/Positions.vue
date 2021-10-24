@@ -1,6 +1,6 @@
 <template>
         <div class="container pt-150">
-            <router-link to="/cargos_politicos/criar">
+            <router-link :to="{'name': 'cargos_politicos.create'}">
                 <base-button type="primary" outline icon="fa fa-plus" class="float-right mb-2">Cadastrar Cargo Político</base-button>
             </router-link>
             <table class="table table-striped">
@@ -115,7 +115,6 @@ export default {
         async destroy() {
             this.getService().destroy(this.positionToDestroy);
             this.positions = await this.index();
-            this.cleanPositionToDestroy();
             this.closeModal();
         }
     },

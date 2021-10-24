@@ -1,6 +1,6 @@
 <template>
         <div class="container pt-150">
-            <router-link to="/partidos_politicos">
+            <router-link :to="{'name': 'partidos_politicos.index'}">
                 <base-button
                     type="primary"
                     outline

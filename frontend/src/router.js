@@ -19,6 +19,7 @@ import CreatePosition from "./views/positions/CreatePosition";
 import EditPosition from "./views/positions/EditPosition";
 import PoliticalParties from "./views/political-parties/PoliticalParties";
 import CreatePoliticalParty from "./views/political-parties/CreatePoliticalParty";
+import EditPoliticalParty from "./views/political-parties/EditPoliticalParty";
 import ConnectBlockchain from "./views/connect-blockchain/ConnectBlockchain";
 
 Vue.use(Router);
@@ -109,7 +110,7 @@ export default new Router({
     },
     {
       path: "/cargos_politicos/criar",
-      name: "Cadastrar Cargo Político",
+      name: "cargos_politicos.create",
       components: {
         header: AppHeader,
         default: CreatePosition,
@@ -127,7 +128,7 @@ export default new Router({
     },
     {
       path: "/partidos_politicos",
-      name: "Partidos Políticos",
+      name: "partidos_politicos.index",
       components: {
         header: AppHeader,
         default: PoliticalParties,
@@ -136,10 +137,19 @@ export default new Router({
     },
     {
       path: "/partidos_politicos/criar",
-      name: "Cadastrar Partidos Políticos",
+      name: "partidos_politicos.create",
       components: {
         header: AppHeader,
         default: CreatePoliticalParty,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/partidos_politicos/editar/:name",
+      name: "partidos_politicos.edit",
+      components: {
+        header: AppHeader,
+        default: EditPoliticalParty,
         footer: AppFooter
       }
     },

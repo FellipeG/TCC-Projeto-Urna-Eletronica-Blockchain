@@ -1,6 +1,6 @@
 <template>
         <div class="container pt-150">
-            <router-link :to="{'name': 'cargos_politicos.index'}">
+            <router-link :to="{'name': 'partidos_politicos.index'}">
                 <base-button
                     type="primary"
                     outline
@@ -10,7 +10,7 @@
             <div class="clearfix"></div>
             <div class="row">
                 <div class="col-12">
-                    <base-input label="Nome do Cargo Político" :required="true" v-model="positionName"></base-input>
+                    <base-input label="Nome do Partido Político" :required="true" v-model="politicalPartyName"></base-input>
                 </div>
             </div>
             <div class="row">
@@ -28,18 +28,18 @@
 import BaseButton from "@/components/BaseButton";
 import BaseInput from "@/components/BaseInput.vue";
 import { eventHub } from "@/main";
-import PositionService from "@/services/PositionService";
+import PoliticalPartyService from "@/services/PoliticalPartyService";
 
 export default {
     data() {
         return {
-            oldPositionName: this.$route.params.name,
-            positionName: this.$route.params.name
+            oldPoliticalPartyName: this.$route.params.name,
+            politicalPartyName: this.$route.params.name
         }
     },
     methods: {
         getService() {
-            return new PositionService(
+            return new PoliticalPartyService(
                 this.$store.state.web3,
                 this.$store.state.contract,
                 this.$store.state.accountAddress
@@ -47,7 +47,7 @@ export default {
         },
         async update() {
             const service = this.getService();
-            service.update(this.oldPositionName, this.positionName);
+            service.update(this.oldPoliticalPartyName, this.politicalPartyName);
         }
     },
     components: {

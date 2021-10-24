@@ -1,6 +1,6 @@
 <template>
         <div class="container pt-150">
-            <router-link to="/cargos_politicos">
+            <router-link :to="{'name': 'cargos_politicos.index'}">
                 <base-button
                     type="primary"
                     outline

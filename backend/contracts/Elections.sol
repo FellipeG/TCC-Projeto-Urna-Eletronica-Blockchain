@@ -47,7 +47,6 @@ contract Elections {
   //arrays
   string[] cityIndex;
   string[] stateIndex;
-  string[] politicalPartyIndex;
   string[] candidateIndex;
 
   //events
