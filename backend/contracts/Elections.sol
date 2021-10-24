@@ -45,7 +45,6 @@ contract Elections {
   uint candidateIndexLength;
 
   //arrays
-  string[] stateIndex;
   string[] candidateIndex;
 
   //events
@@ -99,11 +98,19 @@ contract Elections {
     string name
   );
 
+  event EditedStateEvent(
+    string name
+  );
+
+  event DestroyedStateEvent(
+    string name
+  );
+
   mapping(string => Candidate) candidates;
   mapping(uint => City) cities;
   mapping(uint => PoliticalParty) politicalParties;
   mapping(uint => Position) positions;
-  mapping(string => State) states;
+  mapping(uint => State) states;
 
 
   constructor() public {
@@ -543,10 +550,15 @@ contract Elections {
     string memory stateName
   ) public onlyOwner {
 
-    require(!states[stateName].initialized, "The state name must be unique");
-    states[stateName] = State(stateName, true);
-    stateIndex.push(stateName);
+    for (uint i = 0; i < stateIndexLength; i++) {
+      require(!compareStrings(states[i].name, stateName), "The state name must be unique");
+    }
+
+    states[stateIndexLength] = State(stateName, true);
+    stateIndexLength++;
+
     emit CreatedStateEvent(stateName);
+
   }
 
   function getState(string memory stateName) 
@@ -556,12 +568,24 @@ contract Elections {
       string memory name
     )
   {
-    State memory state = states[stateName];
-    require(state.initialized, "State not found");
+
+    State memory state;
+    bool found = false;
+
+    for (uint i = 0; i < getStateCount(); i++) {
+      if (compareStrings(states[i].name, stateName)) {
+        state = states[i];
+        found = true;
+        break;
+      }
+    }
+
+    require(found, "State not found");
 
     return(
       state.name
     );
+
   }
 
   function getStateCount()
@@ -569,15 +593,68 @@ contract Elections {
     view
     returns(uint count)
   {
-    return stateIndex.length;
+    return stateIndexLength;
   }
 
   function getStateAtIndex(uint index)
     public
     view
-    returns(string memory stateAddress)
+    returns(string memory name)
   {
-    return stateIndex[index];
+
+    State memory state = states[index];
+
+    require(state.initialized, "State not found");
+
+    return (
+      state.name
+    );
+
+  }
+
+  function updateState(
+    string memory oldState,
+    string memory newState
+  ) public
+    returns (bool)
+  {
+
+    bool found = false;
+
+    for (uint i = 0; i < getStateCount(); i++) {
+      if (compareStrings(states[i].name, oldState)) {
+        states[i].name = newState;
+        found = true;
+        break;
+      }
+    }
+  
+    require(found, "State not found");
+    emit EditedStateEvent(newState);
+    return true;
+  }
+
+  function destroyState(
+    string memory state
+  ) public
+    returns (bool)
+  {
+
+    // verificar se a posição não está sendo utilizada antes de deletar
+
+    for (uint i = 0; i < getStateCount(); i++) {
+      if (compareStrings(states[i].name, state)) {
+
+        states[i] = states[getStateCount() - 1];
+        delete states[getStateCount() - 1];
+        stateIndexLength--;
+        //emit event
+        emit DestroyedStateEvent(state);
+        return true;
+
+      }
+    }
+    return false;
   }
 
   /***************************
