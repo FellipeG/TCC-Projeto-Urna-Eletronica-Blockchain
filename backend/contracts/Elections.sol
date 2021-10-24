@@ -290,13 +290,12 @@ contract Elections {
   ) public onlyOwner {
 
     for (uint i = 0; i < positionIndexLength; i++) {
-      require(!compareStrings(positions[positionIndex[i]].name, position), "The position must be unique");
+      require(!compareStrings(positions[i].name, position), "The position must be unique");
     }
 
+    positions[positionIndexLength] = Position(position, true);
     positionIndexLength++;
 
-    positions[positionIndexLength] = Position(position, true);
-    positionIndex.push(positionIndexLength);
     emit CreatedPositionEvent(position);
   }
 
@@ -310,8 +309,8 @@ contract Elections {
     bool found = false;
 
     for (uint i = 0; i < getPositionCount(); i++) {
-      if (compareStrings(positions[positionIndex[i]].name, oldPosition)) {
-        positions[positionIndex[i]].name = newPosition;
+      if (compareStrings(positions[i].name, oldPosition)) {
+        positions[i].name = newPosition;
         found = true;
         break;
       }
@@ -331,10 +330,10 @@ contract Elections {
     // verificar se a posição não está sendo utilizada antes de deletar
 
     for (uint i = 0; i < positionIndexLength; i++) {
-      if (compareStrings(positions[positionIndex[i]].name, position)) {
+      if (compareStrings(positions[i].name, position)) {
 
-        positions[positionIndex[i]] = positions[positionIndex[positionIndexLength - 1]];
-        delete positions[positionIndex[positionIndexLength - 1]];
+        positions[i] = positions[positionIndexLength - 1];
+        delete positions[positionIndexLength - 1];
         positionIndexLength--;
         //emit event
         emit DestroyedPositionEvent(position);
@@ -345,15 +344,25 @@ contract Elections {
     return false;
   }
 
-  function getPosition(uint index) 
+  function getPosition(string memory positionName) 
     public
     view
     returns (
       string memory name
     )
   {
-    Position memory position = positions[index];
-    require(position.initialized, "Position not found");
+    Position memory position;
+    bool found = false;
+
+    for (uint i = 0; i < getPositionCount(); i++) {
+      if (compareStrings(positions[i].name, positionName)) {
+        position = positions[i];
+        found = true;
+        break;
+      }
+    }
+
+    require(found, "Position not found");
 
     return(
       position.name
@@ -371,9 +380,15 @@ contract Elections {
   function getPositionAtIndex(uint index)
     public
     view
-    returns(uint position)
+    returns(string memory name)
   {
-    return positionIndex[index];
+    Position memory position = positions[index];
+
+    require(position.initialized, "Position not found");
+
+    return (
+      position.name
+    );
   }
 
   // State methods

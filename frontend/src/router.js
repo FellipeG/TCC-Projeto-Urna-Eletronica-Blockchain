@@ -117,7 +117,7 @@ export default new Router({
       }
     },
     {
-      path: "/cargos_politicos/editar/:address",
+      path: "/cargos_politicos/editar/:name",
       name: "cargos_politicos.edit",
       components: {
         header: AppHeader,

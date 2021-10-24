@@ -14,9 +14,10 @@
                     <tr v-for="position in positions.data" :key="position">
                         <td>{{ position }}</td>
                         <td align="right">
-                            <router-link :to="{'name': 'cargos_politicos.edit', 'params': {'address': position}}">
+                            <router-link :to="{'name': 'cargos_politicos.edit', 'params': {'name': position}}">
                                 <base-button 
                                     type="warning"
+                                    class="mr-2"
                                     outline
                                     size="md"
                                     icon="fa fa-pencil"

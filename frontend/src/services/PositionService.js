@@ -25,8 +25,7 @@ class PositionService
             
             const positionArray = [];
             for(let i=initialPosition; i<endPosition; i++) {
-                const positionAddress = await this.contract.methods.getPositionAtIndex(i).call();
-                const positionObj = await this.contract.methods.getPosition(positionAddress).call();
+                const positionObj = await this.contract.methods.getPositionAtIndex(i).call();
                 positionArray.push(positionObj);
             }
 
@@ -43,7 +42,6 @@ class PositionService
             const positionObj = await this.contract.methods.getPosition(positionAddress).call();
             return this.utils.response(positionObj);
         } catch(e) {
-            console.log(e.message)
             throw e;
         }
     }
@@ -61,7 +59,6 @@ class PositionService
                 positionArray.push(positionObj);
             }
 
-            
             return this.utils.response(positionArray);
         } catch(e) {
             throw e;
@@ -74,6 +71,19 @@ class PositionService
 
             await this.contract.methods
                 .addPosition(positionName)
+                .send({ from: this.accountAddress })
+        }
+        catch (e) {
+            throw e;
+        }
+    }
+
+    async update(oldPosition, newPosition) {
+
+        try {
+
+            await this.contract.methods
+                .updatePosition(oldPosition, newPosition)
                 .send({ from: this.accountAddress })
         }
         catch (e) {

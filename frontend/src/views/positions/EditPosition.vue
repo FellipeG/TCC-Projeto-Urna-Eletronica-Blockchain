@@ -15,7 +15,7 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <base-button type="success" @click="edit" :block="true">
+                    <base-button type="success" @click="update" :block="true">
                         Editar
                     </base-button>
                 </div>
@@ -33,12 +33,9 @@ import PositionService from "@/services/PositionService";
 export default {
     data() {
         return {
-            positionName: null
+            oldPositionName: this.$route.params.name,
+            positionName: this.$route.params.name
         }
-    },
-    async created() {
-        const positionServiceResponse = await this.show();
-        this.positionName = (positionServiceResponse) ? positionServiceResponse.data : null;
     },
     methods: {
         getService() {
@@ -48,19 +45,15 @@ export default {
                 this.$store.state.accountAddress
             )
         },
-        async edit() {
+        async update() {
             const service = this.getService();
-            service.add(this.positionName);
-            this.clearInput();
+            service.update(this.oldPositionName, this.positionName);
         },
         async show()
         {
             const service = this.getService();
-            return service.show(this.$route.params.address);
+            return service.show();
         },
-        clearInput() {
-            this.positionName = null;
-        }
     },
     components: {
         BaseButton,
