@@ -45,7 +45,6 @@ contract Elections {
   uint candidateIndexLength;
 
   //arrays
-  string[] cityIndex;
   string[] stateIndex;
   string[] candidateIndex;
 
@@ -61,6 +60,14 @@ contract Elections {
   );
 
   event CreatedCityEvent(
+    string name
+  );
+
+  event EditedCityEvent(
+    string name
+  );
+
+  event DestroyedCityEvent(
     string name
   );
 
@@ -93,7 +100,7 @@ contract Elections {
   );
 
   mapping(string => Candidate) candidates;
-  mapping(string => City) cities;
+  mapping(uint => City) cities;
   mapping(uint => PoliticalParty) politicalParties;
   mapping(uint => Position) positions;
   mapping(string => State) states;
@@ -208,9 +215,13 @@ contract Elections {
     string memory cityName
   ) public onlyOwner {
 
-    require(!cities[cityName].initialized, "The city name must be unique");
-    cities[cityName] = City(cityName, true);
-    cityIndex.push(cityName);
+    for (uint i = 0; i < getCityCount(); i++) {
+      require(!compareStrings(cities[i].name, cityName), "The city name must be unique");
+    }
+
+    cities[cityIndexLength] = City(cityName, true);
+    cityIndexLength++;
+
     emit CreatedCityEvent(cityName);
   }
 
@@ -221,8 +232,19 @@ contract Elections {
       string memory name
     )
   {
-    City memory city = cities[cityName];
-    require(city.initialized, "City not found");
+
+    City memory city;
+    bool found = false;
+
+    for (uint i = 0; i < getCityCount(); i++) {
+      if (compareStrings(cities[i].name, cityName)) {
+        city = cities[i];
+        found = true;
+        break;
+      }
+    }
+
+    require(found, "City not found");
 
     return(
       city.name
@@ -235,7 +257,7 @@ contract Elections {
     view
     returns(uint count)
   {
-    return cityIndex.length;
+    return cityIndexLength;
   }
 
   function getCityAtIndex(uint index)
@@ -243,7 +265,59 @@ contract Elections {
     view
     returns(string memory cityAddress)
   {
-    return cityIndex[index];
+
+    City memory city = cities[index];
+
+    require(city.initialized, "Political party not found");
+
+    return (
+      city.name
+    );
+  }
+
+  function updateCity(
+    string memory oldCity,
+    string memory newCity
+  ) public
+    returns (bool)
+  {
+
+    bool found = false;
+
+    for (uint i = 0; i < getCityCount(); i++) {
+      if (compareStrings(cities[i].name, oldCity)) {
+        cities[i].name = newCity;
+        found = true;
+        break;
+      }
+    }
+  
+    require(found, "City not found");
+    emit EditedCityEvent(newCity);
+    return true;
+  }
+
+  function destroyCity(
+    string memory city
+  ) public
+    returns (bool)
+  {
+
+    // verificar se a posição não está sendo utilizada antes de deletar
+
+    for (uint i = 0; i < getCityCount(); i++) {
+      if (compareStrings(cities[i].name, city)) {
+
+        cities[i] = cities[getCityCount() - 1];
+        delete cities[getCityCount() - 1];
+        cityIndexLength--;
+        //emit event
+        emit DestroyedCityEvent(city);
+        return true;
+
+      }
+    }
+    return false;
   }
 
   // Political Party methods
@@ -299,7 +373,7 @@ contract Elections {
   function getPoliticalPartyAtIndex(uint index)
     public
     view
-    returns(string memory politicalPartyAddress)
+    returns(string memory name)
   {
     PoliticalParty memory politicalParty = politicalParties[index];
 
