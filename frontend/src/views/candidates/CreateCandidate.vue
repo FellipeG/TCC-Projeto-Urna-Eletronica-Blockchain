@@ -80,7 +80,10 @@ export default {
     async created() {
         this.cities = await this.getCityService().getAll();
         this.states = await this.getStateService().getAll();
-        this.positions = await this.getPositionService().getAll();
+
+        const positionServiceResponse = await this.getPositionService().getAll();
+        this.positions = (positionServiceResponse) ? positionServiceResponse.data : [];
+
         this.politicalParties = await this.getPoliticalPartyService().getAll();
     },
     methods: {

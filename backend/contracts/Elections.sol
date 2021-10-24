@@ -37,10 +37,17 @@ contract Elections {
     bool initialized;
   }
 
+  //lengths
+  uint cityIndexLength;
+  uint stateIndexLength;
+  uint positionIndexLength;
+  uint politicalPartyIndexLength;
+  uint candidateIndexLength;
+
   //arrays
   string[] cityIndex;
   string[] stateIndex;
-  string[] positionIndex;
+  uint[] positionIndex;
   string[] politicalPartyIndex;
   string[] candidateIndex;
 
@@ -67,6 +74,14 @@ contract Elections {
     string name
   );
 
+  event EditedPositionEvent(
+    string name
+  );
+
+  event DestroyedPositionEvent(
+    string name
+  );
+
   event CreatedStateEvent(
     string name
   );
@@ -74,12 +89,17 @@ contract Elections {
   mapping(string => Candidate) candidates;
   mapping(string => City) cities;
   mapping(string => PoliticalParty) politicalParties;
-  mapping(string => Position) positions;
+  mapping(uint => Position) positions;
   mapping(string => State) states;
 
 
   constructor() public {
     owner = msg.sender;
+    cityIndexLength = 0;
+    stateIndexLength = 0;
+    positionIndexLength = 0;
+    politicalPartyIndexLength = 0;
+    candidateIndexLength = 0;
   }
 
   modifier onlyOwner {
@@ -269,20 +289,70 @@ contract Elections {
     string memory position
   ) public onlyOwner {
 
-    require(!positions[position].initialized, "The position must be unique");
-    positions[position] = Position(position, true);
-    positionIndex.push(position);
+    for (uint i = 0; i < positionIndexLength; i++) {
+      require(!compareStrings(positions[positionIndex[i]].name, position), "The position must be unique");
+    }
+
+    positionIndexLength++;
+
+    positions[positionIndexLength] = Position(position, true);
+    positionIndex.push(positionIndexLength);
     emit CreatedPositionEvent(position);
   }
 
-  function getPosition(string memory positionName) 
+  function updatePosition(
+    string memory oldPosition,
+    string memory newPosition
+  ) public
+    returns (bool)
+  {
+
+    bool found = false;
+
+    for (uint i = 0; i < getPositionCount(); i++) {
+      if (compareStrings(positions[positionIndex[i]].name, oldPosition)) {
+        positions[positionIndex[i]].name = newPosition;
+        found = true;
+        break;
+      }
+    }
+  
+    require(found, "Position not found");
+    emit EditedPositionEvent(newPosition);
+    return true;
+  }
+
+  function destroyPosition(
+    string memory position
+  ) public
+    returns (bool)
+  {
+
+    // verificar se a posição não está sendo utilizada antes de deletar
+
+    for (uint i = 0; i < positionIndexLength; i++) {
+      if (compareStrings(positions[positionIndex[i]].name, position)) {
+
+        positions[positionIndex[i]] = positions[positionIndex[positionIndexLength - 1]];
+        delete positions[positionIndex[positionIndexLength - 1]];
+        positionIndexLength--;
+        //emit event
+        emit DestroyedPositionEvent(position);
+        return true;
+
+      }
+    }
+    return false;
+  }
+
+  function getPosition(uint index) 
     public
     view
     returns (
       string memory name
     )
   {
-    Position memory position = positions[positionName];
+    Position memory position = positions[index];
     require(position.initialized, "Position not found");
 
     return(
@@ -295,13 +365,13 @@ contract Elections {
     view
     returns(uint count)
   {
-    return positionIndex.length;
+    return positionIndexLength;
   }
 
   function getPositionAtIndex(uint index)
     public
     view
-    returns(string memory positionAddress)
+    returns(uint position)
   {
     return positionIndex[index];
   }
@@ -359,7 +429,7 @@ contract Elections {
   }
 
   function getPositionValidation(string memory name) private returns (bool) {
-    getPosition(name);
+    //getPosition(name);
     return true;
   }
 
@@ -373,5 +443,10 @@ contract Elections {
     if (keccak256(bytes(name)) == keccak256('')) { return true; }
     getCity(name);
     return true;
+  }
+
+  // utils
+  function compareStrings (string memory a, string memory b) internal view returns (bool){
+      return keccak256(bytes(a)) == keccak256(bytes(b));
   }
 }

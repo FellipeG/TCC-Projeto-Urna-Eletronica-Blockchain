@@ -1,6 +1,11 @@
+import ServiceUtils from './Utils/ServiceUtils';
+
+require('./Utils/ServiceUtils');
+
 class PositionService
 {
     constructor(web3, contract, accountAddress) {
+        this.utils = new ServiceUtils();
         this.web3 = web3;
         this.contract = contract;
         this.accountAddress = accountAddress;
@@ -26,11 +31,19 @@ class PositionService
             }
 
             
-            return {
-                total: total,
-                data: positionArray
-            }
+            return this.utils.paginatedResponse(total, positionArray);
         } catch(e) {
+            throw e;
+        }
+    }
+
+    async show(positionAddress)
+    {
+        try {
+            const positionObj = await this.contract.methods.getPosition(positionAddress).call();
+            return this.utils.response(positionObj);
+        } catch(e) {
+            console.log(e.message)
             throw e;
         }
     }
@@ -49,7 +62,7 @@ class PositionService
             }
 
             
-            return positionArray;
+            return this.utils.response(positionArray);
         } catch(e) {
             throw e;
         }

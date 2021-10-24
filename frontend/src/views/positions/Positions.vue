@@ -7,16 +7,34 @@
                 <thead>
                     <tr>
                         <th>Nome</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody v-if="positions && positions.data.length">
                     <tr v-for="position in positions.data" :key="position">
                         <td>{{ position }}</td>
+                        <td align="right">
+                            <router-link :to="{'name': 'cargos_politicos.edit', 'params': {'address': position}}">
+                                <base-button 
+                                    type="warning"
+                                    outline
+                                    size="md"
+                                    icon="fa fa-pencil"
+                                    :iconOnly="true"></base-button>
+                            </router-link>
+        
+                            <base-button
+                                type="danger"
+                                outline
+                                size="md"
+                                icon="fa fa-trash"
+                                :iconOnly="true"></base-button>
+                        </td>
                     </tr>
                 </tbody>
                 <tbody v-else>
                     <tr>
-                        <td>Nenhum cargo político cadastrado</td>
+                        <td colspan="2">Nenhum cargo político cadastrado</td>
                     </tr>
                 </tbody>
             </table>

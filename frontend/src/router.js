@@ -16,6 +16,7 @@ import States from "./views/states/States";
 import CreateState from "./views/states/CreateState";
 import Positions from "./views/positions/Positions";
 import CreatePosition from "./views/positions/CreatePosition";
+import EditPosition from "./views/positions/EditPosition";
 import PoliticalParties from "./views/political-parties/PoliticalParties";
 import CreatePoliticalParty from "./views/political-parties/CreatePoliticalParty";
 import ConnectBlockchain from "./views/connect-blockchain/ConnectBlockchain";
@@ -99,7 +100,7 @@ export default new Router({
     },
     {
       path: "/cargos_politicos",
-      name: "Cargos Políticos",
+      name: "cargos_politicos.index",
       components: {
         header: AppHeader,
         default: Positions,
@@ -112,6 +113,15 @@ export default new Router({
       components: {
         header: AppHeader,
         default: CreatePosition,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/cargos_politicos/editar/:address",
+      name: "cargos_politicos.edit",
+      components: {
+        header: AppHeader,
+        default: EditPosition,
         footer: AppFooter
       }
     },

@@ -12,6 +12,7 @@
                         <th>Cargo a Concorrer</th>
                         <th>Estado</th>
                         <th>Cidade</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody v-if="candidates && candidates.data.length">
@@ -22,11 +23,26 @@
                         <td>{{ candidate.position }}</td>
                         <td>{{ candidate.state }}</td>
                         <td>{{ candidate.city }}</td>
+                        <td align="right">
+                            <base-button 
+                                type="warning"
+                                outline
+                                size="md"
+                                icon="fa fa-pencil"
+                                :iconOnly="true"></base-button>
+
+                            <base-button
+                                type="danger"
+                                outline
+                                size="md"
+                                icon="fa fa-trash"
+                                :iconOnly="true"></base-button>
+                        </td>
                     </tr>
                 </tbody>
                 <tbody v-else>
                     <tr>
-                        <td>Nenhum candidato cadastrado</td>
+                        <td colspan="8">Nenhum candidato cadastrado</td>
                     </tr>
                 </tbody>
             </table>
