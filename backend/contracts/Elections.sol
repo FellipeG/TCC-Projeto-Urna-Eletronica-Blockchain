@@ -47,7 +47,6 @@ contract Elections {
   //arrays
   string[] cityIndex;
   string[] stateIndex;
-  uint[] positionIndex;
   string[] politicalPartyIndex;
   string[] candidateIndex;
 
@@ -70,6 +69,14 @@ contract Elections {
     string name
   );
 
+  event EditedPoliticalPartyEvent(
+    string name
+  );
+
+  event DestroyedPoliticalPartyEvent(
+    string name
+  );
+
   event CreatedPositionEvent(
     string name
   );
@@ -88,7 +95,7 @@ contract Elections {
 
   mapping(string => Candidate) candidates;
   mapping(string => City) cities;
-  mapping(string => PoliticalParty) politicalParties;
+  mapping(uint => PoliticalParty) politicalParties;
   mapping(uint => Position) positions;
   mapping(string => State) states;
 
@@ -245,10 +252,14 @@ contract Elections {
   function addPoliticalParty(
     string memory name
   ) public onlyOwner {
-  
-    require(!politicalParties[name].initialized, "The political party must be unique");
-    politicalParties[name] = PoliticalParty(name, true);
-    politicalPartyIndex.push(name);
+
+    for (uint i = 0; i < politicalPartyIndexLength; i++) {
+      require(!compareStrings(politicalParties[i].name, name), "The political party must be unique");
+    }
+
+    politicalParties[positionIndexLength] = PoliticalParty(name, true);
+    politicalPartyIndexLength++;
+
     emit CreatedPoliticalPartyEvent(name);
   }
 
@@ -259,8 +270,19 @@ contract Elections {
       string memory name
     )
   {
-    PoliticalParty memory politicalParty = politicalParties[politicalPartyName];
-    require(politicalParty.initialized, "Political party not found");
+
+    PoliticalParty memory politicalParty;
+    bool found = false;
+
+    for (uint i = 0; i < getPoliticalPartyCount(); i++) {
+      if (compareStrings(politicalParties[i].name, politicalPartyName)) {
+        politicalParty = politicalParties[i];
+        found = true;
+        break;
+      }
+    }
+
+    require(found, "Political party not found");
 
     return(
       politicalParty.name
@@ -272,7 +294,7 @@ contract Elections {
     view
     returns(uint count)
   {
-    return politicalPartyIndex.length;
+    return politicalPartyIndexLength;
   }
 
   function getPoliticalPartyAtIndex(uint index)
@@ -280,7 +302,58 @@ contract Elections {
     view
     returns(string memory politicalPartyAddress)
   {
-    return politicalPartyIndex[index];
+    PoliticalParty memory politicalParty = politicalParties[index];
+
+    require(politicalParty.initialized, "Political party not found");
+
+    return (
+      politicalParty.name
+    );
+  }
+
+  function updatePoliticalParty(
+    string memory oldPoliticalParty,
+    string memory newPoliticalParty
+  ) public
+    returns (bool)
+  {
+
+    bool found = false;
+
+    for (uint i = 0; i < getPoliticalPartyCount(); i++) {
+      if (compareStrings(politicalParties[i].name, oldPoliticalParty)) {
+        politicalParties[i].name = newPoliticalParty;
+        found = true;
+        break;
+      }
+    }
+  
+    require(found, "Political party not found");
+    emit EditedPoliticalPartyEvent(newPoliticalParty);
+    return true;
+  }
+
+  function destroyPoliticalParty(
+    string memory politicalParty
+  ) public
+    returns (bool)
+  {
+
+    // verificar se a posição não está sendo utilizada antes de deletar
+
+    for (uint i = 0; i < getPoliticalPartyCount(); i++) {
+      if (compareStrings(politicalParties[i].name, politicalParty)) {
+
+        politicalParties[i] = politicalParties[getPoliticalPartyCount() - 1];
+        delete politicalParties[getPoliticalPartyCount() - 1];
+        politicalPartyIndexLength--;
+        //emit event
+        emit DestroyedPoliticalPartyEvent(politicalParty);
+        return true;
+
+      }
+    }
+    return false;
   }
 
   // Position methods
