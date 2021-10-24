@@ -1,6 +1,9 @@
+import ServiceUtils from './Utils/ServiceUtils';
+
 class CityService 
 {
     constructor(web3, contract, accountAddress) {
+        this.utils = new ServiceUtils();
         this.web3 = web3;
         this.contract = contract;
         this.accountAddress = accountAddress;
@@ -9,6 +12,7 @@ class CityService
     async index(page, perPage)
     {
         try {
+
             let endPosition = page * perPage;
             const initialPosition = endPosition - perPage;
 
@@ -20,16 +24,22 @@ class CityService
             
             const cityArray = [];
             for(let i=initialPosition; i<endPosition; i++) {
-                const cityAddress = await this.contract.methods.getCityAtIndex(i).call();
-                const cityObj = await this.contract.methods.getCity(cityAddress).call();
+                const cityObj = await this.contract.methods.getCityAtIndex(i).call();
                 cityArray.push(cityObj);
             }
 
+            return this.utils.paginatedResponse(total, cityArray);
             
-            return {
-                total: total,
-                data: cityArray
-            }
+        } catch(e) {
+            throw e;
+        }
+    }
+
+    async show(cityAddress)
+    {
+        try {
+            const cityObj = await this.contract.methods.getPosition(cityAddress).call();
+            return this.utils.response(cityObj);
         } catch(e) {
             throw e;
         }
@@ -43,13 +53,12 @@ class CityService
             
             const cityArray = [];
             for(let i=0; i<total; i++) {
-                const cityAddress = await this.contract.methods.getCityAtIndex(i).call();
-                const cityObj = await this.contract.methods.getCity(cityAddress).call();
+                const cityObj = await this.contract.methods.getCityAtIndex(i).call();
                 cityArray.push(cityObj);
             }
 
-            
-            return cityArray;
+            return this.utils.response(cityArray)
+
         } catch(e) {
             throw e;
         }
@@ -62,6 +71,34 @@ class CityService
             await this.contract.methods
                 .addCity(cityName)
                 .send({ from: this.accountAddress })
+        }
+        catch (e) {
+            throw e;
+        }
+    }
+
+    async update(oldCity, newCity) {
+
+        try {
+
+            await this.contract.methods
+                .updateCity(oldCity, newCity)
+                .send({ from: this.accountAddress })
+        }
+        catch (e) {
+            throw e;
+        }
+    }
+
+    async destroy(city) {
+
+        try {
+
+            const response = await this.contract.methods
+                .destroyCity(city)
+                .send({ from: this.accountAddress })
+
+            return this.utils.response(response);
         }
         catch (e) {
             throw e;

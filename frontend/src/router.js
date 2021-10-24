@@ -7,19 +7,27 @@ import Landing from "./views/Landing.vue";
 import Login from "./views/Login.vue";
 import Register from "./views/Register.vue";
 import Profile from "./views/Profile.vue";
+
 import Home from "./views/home/Home";
+
 import Candidates from "./views/candidates/Candidates";
 import CreateCandidate from './views/candidates/CreateCandidate';
+
 import Cities from "./views/cities/Cities";
 import CreateCity from "./views/cities/CreateCity";
+import EditCity from "./views/cities/EditCity";
+
 import States from "./views/states/States";
 import CreateState from "./views/states/CreateState";
+
 import Positions from "./views/positions/Positions";
 import CreatePosition from "./views/positions/CreatePosition";
 import EditPosition from "./views/positions/EditPosition";
+
 import PoliticalParties from "./views/political-parties/PoliticalParties";
 import CreatePoliticalParty from "./views/political-parties/CreatePoliticalParty";
 import EditPoliticalParty from "./views/political-parties/EditPoliticalParty";
+
 import ConnectBlockchain from "./views/connect-blockchain/ConnectBlockchain";
 
 Vue.use(Router);
@@ -65,7 +73,7 @@ export default new Router({
     },
     {
       path: "/cidades",
-      name: "Cidades",
+      name: "cidades.index",
       components: {
         header: AppHeader,
         default: Cities,
@@ -74,10 +82,19 @@ export default new Router({
     },
     {
       path: "/cidades/criar",
-      name: "Cadastrar Cidade",
+      name: "cidades.create",
       components: {
         header: AppHeader,
         default: CreateCity,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/cidades/editar/:name",
+      name: "cidades.edit",
+      components: {
+        header: AppHeader,
+        default: EditCity,
         footer: AppFooter
       }
     },
