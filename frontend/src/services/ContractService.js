@@ -1,4 +1,6 @@
-export const Elections = require("../../../backend/build/contracts/Elections.json")
+export const Elections = require("../../../backend/build/contracts/Elections.json");
+
+import { eventHub } from "../main";
 
 export default (web3, contractAddress) => {
 
@@ -8,6 +10,7 @@ export default (web3, contractAddress) => {
     )
 
     contract.events.allEvents({}, (error, event) => {
+        eventHub.$emit(event.event, event.returnValues);
         console.log('Event', event)
     })
 

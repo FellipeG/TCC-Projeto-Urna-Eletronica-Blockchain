@@ -81,6 +81,13 @@ export default {
     },
     async created() {
         this.cities = await this.index();
+
+        eventHub.$on("DestroyedCityEvent", (city) => {
+            this.index().then(response => {
+                this.cities = response;
+            });
+        });
+
     },
     methods: {
         getService() {
@@ -114,7 +121,6 @@ export default {
         },
         async destroy() {
             this.getService().destroy(this.cityToDestroy);
-            this.cities = await this.index();
             this.closeModal();
         }
     },

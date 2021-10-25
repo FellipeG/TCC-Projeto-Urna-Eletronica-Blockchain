@@ -81,6 +81,13 @@ export default {
     },
     async created() {
         this.politicalParties = await this.index();
+
+        eventHub.$on("DestroyedPoliticalPartyEvent", (politicalParty) => {
+            this.index().then(response => {
+                this.politicalParties = response;
+            });
+        });
+
     },
     methods: {
         getService() {
@@ -114,7 +121,6 @@ export default {
         },
         async destroy() {
             this.getService().destroy(this.politicalPartyToDestroy);
-            this.politicalParties = await this.index();
             this.closeModal();
         }
     },

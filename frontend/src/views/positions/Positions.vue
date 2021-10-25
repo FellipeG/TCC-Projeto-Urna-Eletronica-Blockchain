@@ -81,6 +81,13 @@ export default {
     },
     async created() {
         this.positions = await this.index();
+
+        eventHub.$on("DestroyedPositionEvent", (position) => {
+            this.index().then(response => {
+                this.positions = response;
+            });
+        });
+
     },
     methods: {
         getService() {
@@ -114,7 +121,6 @@ export default {
         },
         async destroy() {
             this.getService().destroy(this.positionToDestroy);
-            this.positions = await this.index();
             this.closeModal();
         }
     },

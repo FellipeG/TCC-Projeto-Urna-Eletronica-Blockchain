@@ -56,7 +56,7 @@ export default new Router({
     },
     {
       path: "/candidatos",
-      name: "Candidatos",
+      name: "candidatos.index",
       components: {
         header: AppHeader,
         default: Candidates,
@@ -65,7 +65,7 @@ export default new Router({
     },
     {
       path: "/candidatos/criar",
-      name: "Cadastrar Candidatos",
+      name: "candidatos.create",
       components: {
         header: AppHeader,
         default: CreateCandidate,

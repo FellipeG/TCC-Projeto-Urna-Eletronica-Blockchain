@@ -81,6 +81,13 @@ export default {
     },
     async created() {
         this.states = await this.index();
+
+        eventHub.$on("DestroyedStateEvent", (state) => {
+            this.index().then(response => {
+                this.states = response;
+            });
+        });
+
     },
     methods: {
         getService() {
@@ -114,7 +121,6 @@ export default {
         },
         async destroy() {
             this.getService().destroy(this.stateToDestroy);
-            this.states = await this.index();
             this.closeModal();
         }
     },
