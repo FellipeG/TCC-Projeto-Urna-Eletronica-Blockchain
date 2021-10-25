@@ -15,8 +15,8 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <base-button type="success" @click="add"  :block="true">
-                        Cadastrar
+                    <base-button type="success" @click="update"  :block="true">
+                        Editar
                     </base-button>
                 </div>
             </div>
@@ -33,7 +33,8 @@ import StateService from "@/services/StateService";
 export default {
     data() {
         return {
-            stateName: null
+            oldStateName: this.$route.params.name,
+            stateName: this.$route.params.name
         }
     },
     methods: {
@@ -44,14 +45,11 @@ export default {
                 this.$store.state.accountAddress
             )
         },
-        async add() {
+        async update() {
             const service = this.getService();
-            service.add(this.stateName);
-            this.clearInput();
+            service.update(this.oldStateName, this.stateName);
         },
-        clearInput() {
-            this.stateName = null;
-        }
+        
     },
     components: {
         BaseButton,

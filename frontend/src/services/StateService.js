@@ -1,6 +1,9 @@
+import ServiceUtils from './Utils/ServiceUtils';
+
 class StateService
 {
     constructor(web3, contract, accountAddress) {
+        this.utils = new ServiceUtils();
         this.web3 = web3;
         this.contract = contract;
         this.accountAddress = accountAddress;
@@ -9,6 +12,7 @@ class StateService
     async index(page, perPage)
     {
         try {
+
             let endPosition = page * perPage;
             const initialPosition = endPosition - perPage;
 
@@ -20,16 +24,22 @@ class StateService
             
             const stateArray = [];
             for(let i=initialPosition; i<endPosition; i++) {
-                const stateAddress = await this.contract.methods.getStateAtIndex(i).call();
-                const stateObj = await this.contract.methods.getState(stateAddress).call();
+                const stateObj = await this.contract.methods.getStateAtIndex(i).call();
                 stateArray.push(stateObj);
             }
 
-            
-            return {
-                total: total,
-                data: stateArray
-            }
+            return this.utils.paginatedResponse(total, stateArray);
+
+        } catch(e) {
+            throw e;
+        }
+    }
+
+    async show(stateAddress)
+    {
+        try {
+            const stateObj = await this.contract.methods.getPosition(stateAddress).call();
+            return this.utils.response(stateObj);
         } catch(e) {
             throw e;
         }
@@ -43,13 +53,12 @@ class StateService
 
             const stateArray = [];
             for(let i=0; i<total; i++) {
-                const stateAddress = await this.contract.methods.getStateAtIndex(i).call();
-                const stateObj = await this.contract.methods.getState(stateAddress).call();
+                const stateObj = await this.contract.methods.getStateAtIndex(i).call();
                 stateArray.push(stateObj);
             }
 
-            
-            return stateArray;
+            this.utils.response(stateArray);
+
         } catch(e) {
             throw e;
         }
@@ -62,6 +71,34 @@ class StateService
             await this.contract.methods
                 .addState(stateName)
                 .send({ from: this.accountAddress })
+        }
+        catch (e) {
+            throw e;
+        }
+    }
+
+    async update(oldState, newState) {
+
+        try {
+
+            await this.contract.methods
+                .updateState(oldState, newState)
+                .send({ from: this.accountAddress })
+        }
+        catch (e) {
+            throw e;
+        }
+    }
+
+    async destroy(state) {
+
+        try {
+
+            const response = await this.contract.methods
+                .destroyState(state)
+                .send({ from: this.accountAddress })
+
+            return this.utils.response(response);
         }
         catch (e) {
             throw e;

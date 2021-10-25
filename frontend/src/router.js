@@ -19,6 +19,7 @@ import EditCity from "./views/cities/EditCity";
 
 import States from "./views/states/States";
 import CreateState from "./views/states/CreateState";
+import EditState from "./views/states/EditState";
 
 import Positions from "./views/positions/Positions";
 import CreatePosition from "./views/positions/CreatePosition";
@@ -100,7 +101,7 @@ export default new Router({
     },
     {
       path: "/estados",
-      name: "Estados",
+      name: "estados.index",
       components: {
         header: AppHeader,
         default: States,
@@ -109,10 +110,19 @@ export default new Router({
     },
     {
       path: "/estados/criar",
-      name: "Cadastrar Estado",
+      name: "estados.create",
       components: {
         header: AppHeader,
         default: CreateState,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/estados/editar/:name",
+      name: "estados.edit",
+      components: {
+        header: AppHeader,
+        default: EditState,
         footer: AppFooter
       }
     },
