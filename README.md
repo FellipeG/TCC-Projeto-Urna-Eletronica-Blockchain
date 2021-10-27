@@ -4,9 +4,9 @@ Este projeto destina-se a implementar um sistema de urna eletrônica que utilize
 
 # Instruções
 
-* Rode o comando `docker-compose up -d` na pasta do projeto para subir o container
+* Rode o comando `docker-compose up -d --build` na pasta do projeto para subir o container
 * Para entrar no container, execute `docker-compose exec app sh`
-* Após isso, rode o sh com o comando `./init.sh` e siga as intruções na tela
+* Após isso, rode o sh com o comando `sh init.sh 1` para iniciar o projeto ou `sh init.sh 2` para executar os testes unitários.
 
 # Metamask
 

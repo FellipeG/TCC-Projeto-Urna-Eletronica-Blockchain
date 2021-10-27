@@ -20,7 +20,4 @@ then
     cd ../
 else
     echo "Opção inválida!"
-    exit 1
 fi
-
-done
