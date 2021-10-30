@@ -44,9 +44,6 @@ contract Elections {
   uint politicalPartyIndexLength;
   uint candidateIndexLength;
 
-  //arrays
-  string[] candidateIndex;
-
   //events
   event CreatedCandidateEvent(
     string fullName,
@@ -57,6 +54,22 @@ contract Elections {
     string city,
     string electoralNumber
   );
+
+  event EditedCandidateEvent(
+    string fullName,
+    string birthDate,
+    string politicalParty,
+    string position,
+    string state,
+    string city,
+    string electoralNumber
+  );
+
+  event DestroyedCandidateEvent(
+    string fullName,
+    string electoralNumber
+  );
+
 
   event CreatedCityEvent(
     string name
@@ -106,7 +119,7 @@ contract Elections {
     string name
   );
 
-  mapping(string => Candidate) candidates;
+  mapping(uint => Candidate) candidates;
   mapping(uint => City) cities;
   mapping(uint => PoliticalParty) politicalParties;
   mapping(uint => Position) positions;
@@ -140,7 +153,9 @@ contract Elections {
   ) public onlyOwner
   {
 
-    require(!candidates[electoralNumber].initialized, "The electoral number must be unique");
+    for (uint i = 0; i < getCandidateCount(); i++) {
+      require(!compareStrings(candidates[i].electoralNumber, electoralNumber), "The electoral number must be unique");
+    }
 
     // Validations
     getPoliticalPartyValidation(politicalParty);
@@ -148,7 +163,7 @@ contract Elections {
     getStateValidation(state);
     getCityValidation(city);
 
-    candidates[electoralNumber] = Candidate(
+    candidates[candidateIndexLength] = Candidate(
       fullName,
       birthDate,
       politicalParty,
@@ -158,8 +173,7 @@ contract Elections {
       electoralNumber,
       true
     );
-
-    candidateIndex.push(electoralNumber);
+    candidateIndexLength++;
 
     emit CreatedCandidateEvent(
       fullName,
@@ -170,6 +184,7 @@ contract Elections {
       city,
       electoralNumber
     );
+
   }
 
   function getCandidate(string memory number) 
@@ -185,8 +200,19 @@ contract Elections {
       string memory electoralNumber
     )
   {
-    Candidate memory candidate = candidates[number];
-    require(candidate.initialized, "Candidate not found");
+
+    Candidate memory candidate;
+    bool found = false;
+
+    for (uint i = 0; i < getCandidateCount(); i++) {
+      if (compareStrings(candidates[i].electoralNumber, number)) {
+        candidate = candidates[i];
+        found = true;
+        break;
+      }
+    }
+
+    require(found, "Candidate not found");
 
     return(
       candidate.fullName,
@@ -205,16 +231,108 @@ contract Elections {
     view
     returns(uint count)
   {
-    return candidateIndex.length;
+    return candidateIndexLength;
   }
 
   function getCandidateAtIndex(uint index)
     public
     view
-    returns(string memory candidateAddress)
+    returns(
+      string memory fullName,
+      string memory birthDate,
+      string memory politicalParty,
+      string memory position,
+      string memory state,
+      string memory city,
+      string memory electoralNumber
+  )
   {
-    return candidateIndex[index];
+    Candidate memory candidate = candidates[index];
+
+    require(candidate.initialized, "Candidate not found");
+
+    return (
+      candidate.fullName,
+      candidate.birthDate,
+      candidate.politicalParty,
+      candidate.position,
+      candidate.state,
+      candidate.city,
+      candidate.electoralNumber
+    );
   }
+
+  function updateCandidate(
+    string memory oldElectoralNumber,
+    string memory newFullName,
+    string memory newBirthDate,
+    string memory newPoliticalParty,
+    string memory newPosition,
+    string memory newState,
+    string memory newCity,
+    string memory newElectoralNumber
+  ) public
+    returns (bool)
+  {
+
+    bool found = false;
+
+    for (uint i = 0; i < getCandidateCount(); i++) {
+      if (compareStrings(candidates[i].electoralNumber, oldElectoralNumber)) {
+        candidates[i].fullName = newFullName;
+        candidates[i].birthDate = newBirthDate;
+        candidates[i].politicalParty = newPoliticalParty;
+        candidates[i].position = newPosition;
+        candidates[i].state = newState;
+        candidates[i].city = newCity;
+        candidates[i].electoralNumber = newElectoralNumber;
+        found = true;
+        break;
+      }
+    }
+  
+    require(found, "Candidate not found");
+
+    emit EditedCandidateEvent(
+      newFullName,
+      newBirthDate,
+      newPoliticalParty,
+      newPosition,
+      newState,
+      newCity,
+      newElectoralNumber
+    );
+
+    return true;
+  }
+
+  function destroyCandidate(
+    string memory electoralNumber
+  ) public
+    returns (bool)
+  {
+
+    // verificar se a posição não está sendo utilizada antes de deletar
+
+    for (uint i = 0; i < getCandidateCount(); i++) {
+      if (compareStrings(candidates[i].electoralNumber, electoralNumber)) {
+
+        emit DestroyedCandidateEvent(
+          candidates[i].fullName,
+          candidates[i].electoralNumber
+        );
+
+        candidates[i] = candidates[getCandidateCount() - 1];
+
+        delete candidates[getCandidateCount() - 1];
+        candidateIndexLength--;
+
+        return true;
+
+      }
+    }
+    return false;
+  } 
 
   // City methods
 
