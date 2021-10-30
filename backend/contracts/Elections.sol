@@ -10,7 +10,6 @@ contract Elections {
     string fullName;
     string birthDate;
     string politicalParty;
-    string position;
     string state;
     string city;
     string electoralNumber;
@@ -49,7 +48,6 @@ contract Elections {
     string fullName,
     string birthDate,
     string politicalParty,
-    string position,
     string state,
     string city,
     string electoralNumber
@@ -59,7 +57,6 @@ contract Elections {
     string fullName,
     string birthDate,
     string politicalParty,
-    string position,
     string state,
     string city,
     string electoralNumber
@@ -69,7 +66,6 @@ contract Elections {
     string fullName,
     string electoralNumber
   );
-
 
   event CreatedCityEvent(
     string name
@@ -146,7 +142,6 @@ contract Elections {
     string memory fullName,
     string memory birthDate,
     string memory politicalParty,
-    string memory position,
     string memory state,
     string memory city,
     string memory electoralNumber
@@ -159,7 +154,6 @@ contract Elections {
 
     // Validations
     getPoliticalPartyValidation(politicalParty);
-    getPositionValidation(position);
     getStateValidation(state);
     getCityValidation(city);
 
@@ -167,7 +161,6 @@ contract Elections {
       fullName,
       birthDate,
       politicalParty,
-      position,
       state,
       city,
       electoralNumber,
@@ -179,7 +172,6 @@ contract Elections {
       fullName,
       birthDate,
       politicalParty,
-      position,
       state,
       city,
       electoralNumber
@@ -194,7 +186,6 @@ contract Elections {
       string memory fullName,
       string memory birthDate,
       string memory politicalParty,
-      string memory position,
       string memory state,
       string memory city,
       string memory electoralNumber
@@ -218,7 +209,6 @@ contract Elections {
       candidate.fullName,
       candidate.birthDate,
       candidate.politicalParty,
-      candidate.position,
       candidate.state,
       candidate.city,
       candidate.electoralNumber
@@ -241,7 +231,6 @@ contract Elections {
       string memory fullName,
       string memory birthDate,
       string memory politicalParty,
-      string memory position,
       string memory state,
       string memory city,
       string memory electoralNumber
@@ -255,7 +244,6 @@ contract Elections {
       candidate.fullName,
       candidate.birthDate,
       candidate.politicalParty,
-      candidate.position,
       candidate.state,
       candidate.city,
       candidate.electoralNumber
@@ -267,7 +255,6 @@ contract Elections {
     string memory newFullName,
     string memory newBirthDate,
     string memory newPoliticalParty,
-    string memory newPosition,
     string memory newState,
     string memory newCity,
     string memory newElectoralNumber
@@ -282,7 +269,6 @@ contract Elections {
         candidates[i].fullName = newFullName;
         candidates[i].birthDate = newBirthDate;
         candidates[i].politicalParty = newPoliticalParty;
-        candidates[i].position = newPosition;
         candidates[i].state = newState;
         candidates[i].city = newCity;
         candidates[i].electoralNumber = newElectoralNumber;
@@ -297,7 +283,6 @@ contract Elections {
       newFullName,
       newBirthDate,
       newPoliticalParty,
-      newPosition,
       newState,
       newCity,
       newElectoralNumber

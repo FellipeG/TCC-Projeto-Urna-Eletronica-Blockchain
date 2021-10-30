@@ -9,7 +9,6 @@
                         <th>Número Eleitoral</th>
                         <th>Nome Completo</th>
                         <th>Partido Político</th>
-                        <th>Cargo a Concorrer</th>
                         <th>Estado</th>
                         <th>Cidade</th>
                         <th></th>
@@ -20,7 +19,6 @@
                         <td>{{ candidate.electoralNumber }}</td>
                         <td>{{ candidate.fullName }}</td>
                         <td>{{ candidate.politicalParty }}</td>
-                        <td>{{ candidate.position }}</td>
                         <td>{{ candidate.state }}</td>
                         <td>{{ candidate.city }}</td>
                         <td align="right">

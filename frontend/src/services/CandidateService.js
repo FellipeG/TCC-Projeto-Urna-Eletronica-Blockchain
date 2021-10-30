@@ -68,7 +68,6 @@ class CandidateService
         fullName,
         birthDate,
         politicalParty,
-        position,
         state,
         city,
         electoralNumber
@@ -81,7 +80,6 @@ class CandidateService
                     fullName,
                     birthDate,
                     politicalParty,
-                    position,
                     state,
                     city,
                     electoralNumber
@@ -99,7 +97,6 @@ class CandidateService
         newFullName,
         newBirthDate,
         newPoliticalParty,
-        newPosition,
         newState,
         newCity,
         newElectoralNumber
@@ -113,7 +110,6 @@ class CandidateService
                     newFullName,
                     newBirthDate,
                     newPoliticalParty,
-                    newPosition,
                     newState,
                     newCity,
                     newElectoralNumber
