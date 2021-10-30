@@ -1,6 +1,6 @@
 <template>
         <div class="container pt-150">
-            <router-link to="/candidatos/criar">
+            <router-link :to="{'name': 'candidatos.create'}">
                 <base-button type="primary" outline icon="fa fa-plus" class="float-right mb-2">Cadastrar Candidato</base-button>
             </router-link>
             <table class="table table-striped">
@@ -24,14 +24,18 @@
                         <td>{{ candidate.state }}</td>
                         <td>{{ candidate.city }}</td>
                         <td align="right">
-                            <base-button 
-                                type="warning"
-                                outline
-                                size="md"
-                                icon="fa fa-pencil"
-                                :iconOnly="true"></base-button>
+                            <router-link :to="{'name': 'candidatos.edit', 'params': {'number': candidate.electoralNumber}}">
+                                <base-button 
+                                    type="warning"
+                                    class="mr-2"
+                                    outline
+                                    size="md"
+                                    icon="fa fa-pencil"
+                                    :iconOnly="true"></base-button>
+                            </router-link>
 
                             <base-button
+                                @click="openModal(candidate)"
                                 type="danger"
                                 outline
                                 size="md"
@@ -54,6 +58,16 @@
                     align="center"
                     @input="setPage"></base-pagination>
             </div>
+            <modal 
+                :show="showModal"
+                bodyClasses="d-none"
+                @close="closeModal">
+                <template v-slot:header><strong>Tem certeza que deseja deletar este registro?</strong></template>
+                <template v-slot:footer>
+                    <base-button type="primary" outline @click="closeModal">Cancelar</base-button>
+                    <base-button type="danger" @click="destroy()">Deletar</base-button>
+                </template>
+            </modal>
         </div>
 </template>
 
@@ -61,6 +75,7 @@
 
 import BasePagination from "@/components/BasePagination";
 import BaseButton from "@/components/BaseButton";
+import Modal from "@/components/Modal";
 import { eventHub } from "@/main";
 import CandidateService from "@/services/CandidateService";
 
@@ -69,11 +84,20 @@ export default {
         return {
             candidates: null,
             page: 1,
-            perPage: 10
+            perPage: 10,
+            showModal: false,
+            candidateToDestroy: null
         }
     },
     async created() {
         this.candidates = await this.index();
+
+        eventHub.$on("DestroyedCandidateEvent", (candidate) => {
+            this.index().then(response => {
+                this.candidates = response;
+            });
+        });
+
     },
     methods: {
         getService() {
@@ -90,11 +114,30 @@ export default {
         async setPage(page) {
             this.page = page;
             this.candidates = await this.index();
+        },
+        openModal(candidate) {
+            this.setCandidateToDestroy(candidate.electoralNumber);
+            this.showModal = true;
+        },
+        closeModal() {
+            this.cleanCandidateToDestroy();
+            this.showModal = false;
+        },
+        setCandidateToDestroy(electoralNumber) {
+            this.candidateToDestroy = electoralNumber;
+        },
+        cleanCandidateToDestroy() {
+            this.candidateToDestroy = null;
+        },
+        async destroy() {
+            this.getService().destroy(this.candidateToDestroy);
+            this.closeModal();
         }
     },
     components: {
         BasePagination,
-        BaseButton
+        BaseButton,
+        Modal
     }
 }
 

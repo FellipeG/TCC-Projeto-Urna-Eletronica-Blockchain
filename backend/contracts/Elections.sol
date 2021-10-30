@@ -455,7 +455,7 @@ contract Elections {
       require(!compareStrings(politicalParties[i].name, name), "The political party must be unique");
     }
 
-    politicalParties[positionIndexLength] = PoliticalParty(name, true);
+    politicalParties[politicalPartyIndexLength] = PoliticalParty(name, true);
     politicalPartyIndexLength++;
 
     emit CreatedPoliticalPartyEvent(name);

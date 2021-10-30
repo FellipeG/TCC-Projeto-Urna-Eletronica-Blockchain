@@ -50,14 +50,14 @@ class StateService
         try {
 
             const total = await this.contract.methods.getStateCount().call();
-
+            
             const stateArray = [];
             for(let i=0; i<total; i++) {
                 const stateObj = await this.contract.methods.getStateAtIndex(i).call();
                 stateArray.push(stateObj);
             }
 
-            this.utils.response(stateArray);
+            return this.utils.response(stateArray);
 
         } catch(e) {
             throw e;

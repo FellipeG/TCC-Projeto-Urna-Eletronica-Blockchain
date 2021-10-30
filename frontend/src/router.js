@@ -12,6 +12,7 @@ import Home from "./views/home/Home";
 
 import Candidates from "./views/candidates/Candidates";
 import CreateCandidate from './views/candidates/CreateCandidate';
+import EditCandidate from './views/candidates/EditCandidate';
 
 import Cities from "./views/cities/Cities";
 import CreateCity from "./views/cities/CreateCity";
@@ -69,6 +70,15 @@ export default new Router({
       components: {
         header: AppHeader,
         default: CreateCandidate,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/candidatos/editar/:number",
+      name: "candidatos.edit",
+      components: {
+        header: AppHeader,
+        default: EditCandidate,
         footer: AppFooter
       }
     },

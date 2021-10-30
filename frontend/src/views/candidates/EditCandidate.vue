@@ -39,8 +39,8 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <base-button type="success" @click="add" :block="true">
-                        Cadastrar
+                    <base-button type="success" @click="update" :block="true">
+                        Editar
                     </base-button>
                 </div>
             </div>
@@ -62,7 +62,7 @@ import CandidateService from "@/services/CandidateService";
 export default {
     data() {
         return {
-
+            oldElectoralNumber: this.$route.params.number,
             fullName: '',
             birthDate: '',
             city: '',
@@ -82,8 +82,9 @@ export default {
         const stateServiceResponse = await this.getStateService().getAll();
         const positionServiceResponse = await this.getPositionService().getAll();
         const politicalPartyServiceResponse = await this.getPoliticalPartyService().getAll();
+        const candidateServiceResponse = await this.getCandidateService().show(this.oldElectoralNumber);
 
-        console.log(stateServiceResponse)
+        this.fillData(candidateServiceResponse);
 
         this.cities = (cityServiceResponse) ? cityServiceResponse.data : [];
         this.states = (stateServiceResponse) ? stateServiceResponse.data : [];
@@ -126,9 +127,10 @@ export default {
                 this.$store.state.accountAddress
             )
         },
-        async add() {
+        async update() {
             const service = this.getCandidateService();
-            service.add(
+            service.update(
+                this.oldElectoralNumber,
                 this.fullName,
                 this.birthDate,
                 this.politicalParty,
@@ -137,16 +139,21 @@ export default {
                 this.city,
                 this.electoralNumber
             );
-            this.clearInput();
         },
-        clearInput() {
-            this.fullName = '';
-            this.birthDate = '';
-            this.politicalParty = '';
-            this.position = '';
-            this.state = '';
-            this.city = '';
-            this.electoralNumber = '';
+        fillData(serviceResponse) {
+            if (!serviceResponse) {
+                return;
+            }
+
+            const data = serviceResponse.data;
+
+            this.fullName = data.fullName;
+            this.birthDate = data.birthDate;
+            this.city = data.city;
+            this.state = data.state;
+            this.position = data.position;
+            this.politicalParty = data.politicalParty;
+            this.electoralNumber =  data.electoralNumber;
         }
     },
     components: {

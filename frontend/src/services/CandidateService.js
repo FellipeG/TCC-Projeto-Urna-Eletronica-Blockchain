@@ -1,6 +1,9 @@
+import ServiceUtils from './Utils/ServiceUtils';
+
 class CandidateService 
 {
     constructor(web3, contract, accountAddress) {
+        this.utils = new ServiceUtils();
         this.web3 = web3;
         this.contract = contract;
         this.accountAddress = accountAddress;
@@ -20,16 +23,22 @@ class CandidateService
             
             const candidateArray = [];
             for(let i=initialPosition; i<endPosition; i++) {
-                const candidateAddress = await this.contract.methods.getCandidateAtIndex(i).call();
-                const candidateObj = await this.contract.methods.getCandidate(candidateAddress).call();
+                const candidateObj = await this.contract.methods.getCandidateAtIndex(i).call();
                 candidateArray.push(candidateObj);
             }
 
-            
-            return {
-                total: total,
-                data: candidateArray
-            }
+            return this.utils.paginatedResponse(total, candidateArray);
+
+        } catch(e) {
+            throw e;
+        }
+    }
+
+    async show(candidateAddress)
+    {
+        try {
+            const obj = await this.contract.methods.getCandidate(candidateAddress).call();
+            return this.utils.response(obj);
         } catch(e) {
             throw e;
         }
@@ -43,13 +52,13 @@ class CandidateService
             
             const candidateArray = [];
             for(let i=0; i<total; i++) {
-                const candidateAddress = await this.contract.methods.getCandidateAtIndex(i).call();
-                const candidateObj = await this.contract.methods.getCandidate(candidateAddress).call();
+                const candidateObj = await this.contract.methods.getCandidateAtIndex(i).call();
                 candidateArray.push(candidateObj);
             }
 
             
-            return candidateArray;
+            return this.utils.response(candidateArray);
+
         } catch(e) {
             throw e;
         }
@@ -79,6 +88,52 @@ class CandidateService
                 )
                 .send({ from: this.accountAddress })
 
+        }
+        catch (e) {
+            throw e;
+        }
+    }
+
+    async update(
+        oldElectoralNumber,
+        newFullName,
+        newBirthDate,
+        newPoliticalParty,
+        newPosition,
+        newState,
+        newCity,
+        newElectoralNumber
+    ) {
+
+        try {
+
+            await this.contract.methods
+                .updateCandidate(
+                    oldElectoralNumber,
+                    newFullName,
+                    newBirthDate,
+                    newPoliticalParty,
+                    newPosition,
+                    newState,
+                    newCity,
+                    newElectoralNumber
+                )
+                .send({ from: this.accountAddress })
+        }
+        catch (e) {
+            throw e;
+        }
+    }
+
+    async destroy(electoralNumber) {
+
+        try {
+
+            const response = await this.contract.methods
+                .destroyCandidate(electoralNumber)
+                .send({ from: this.accountAddress })
+
+            return this.utils.response(response);
         }
         catch (e) {
             throw e;
