@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+pragma experimental ABIEncoderV2;
 pragma solidity >=0.4.22 <0.9.0;
 
 contract Elections {
@@ -6,6 +7,16 @@ contract Elections {
   address owner;
 
   // structs
+
+  struct Election {
+    uint id;
+    string title;
+    string[] candidates;
+    string[] votes;
+    uint endDate;
+    bool initialized;
+  }
+
   struct Candidate {
     string fullName;
     string birthDate;
@@ -37,6 +48,7 @@ contract Elections {
   }
 
   //lengths
+  uint electionIndexLength;
   uint cityIndexLength;
   uint stateIndexLength;
   uint positionIndexLength;
@@ -44,6 +56,20 @@ contract Elections {
   uint candidateIndexLength;
 
   //events
+  event CreatedElectionEvent(
+    string title,
+    string[] candidates
+  );
+
+  event EditedElectionEvent(
+    string title,
+    uint endDate
+  );
+
+  event DestroyedElectionEvent(
+    string title
+  );
+
   event CreatedCandidateEvent(
     string fullName,
     string birthDate,
@@ -115,6 +141,7 @@ contract Elections {
     string name
   );
 
+  mapping(uint => Election) elections;
   mapping(uint => Candidate) candidates;
   mapping(uint => City) cities;
   mapping(uint => PoliticalParty) politicalParties;
@@ -124,6 +151,7 @@ contract Elections {
 
   constructor() public {
     owner = msg.sender;
+    electionIndexLength = 0;
     cityIndexLength = 0;
     stateIndexLength = 0;
     positionIndexLength = 0;
@@ -135,6 +163,153 @@ contract Elections {
     require(owner == msg.sender, "Only the owner can update that information");
     _;
   }
+
+  // Election methods
+
+  function addElection(
+    string memory title,
+    string[] memory electionCandidates
+  ) public onlyOwner
+  {
+
+    string[] memory votes;
+
+    elections[electionIndexLength] = Election(
+      electionIndexLength,
+      title,
+      electionCandidates,
+      votes,
+      1,
+      true
+    );
+    electionIndexLength++;
+
+    emit CreatedElectionEvent(
+      title,
+      electionCandidates
+    );
+
+  }
+
+  function getElectionCount()
+    public
+    view
+    returns(uint count)
+  {
+    return electionIndexLength;
+  }
+
+  function getElection(uint id) 
+    public
+    view
+    returns (
+      string memory title,
+      string[] memory electionCandidates,
+      string[] memory electionVotes,
+      uint endDate
+    )
+  {
+
+    Election memory election;
+    bool found = false;
+
+    for (uint i = 0; i < getElectionCount(); i++) {
+      if (elections[i].id == id) {
+        election = elections[i];
+        found = true;
+        break;
+      }
+    }
+
+    require(found, "Election not found");
+
+    return(
+      election.title,
+      election.candidates,
+      election.votes,
+      election.endDate
+    );
+    
+  }
+
+  function getElectionAtIndex(uint index)
+    public
+    view
+    returns(
+      string memory title,
+      string[] memory electionCandidates,
+      string[] memory electionVotes,
+      uint endDate
+  )
+  {
+    Election memory election = elections[index];
+
+    require(election.initialized, "Election not found");
+
+    return (
+      election.title,
+      election.candidates,
+      election.votes,
+      election.endDate
+    );
+  }
+
+  function updateElection(
+    uint id,
+    string memory newTitle,
+    uint newEndDate
+  ) public
+    returns (bool)
+  {
+
+    bool found = false;
+
+    for (uint i = 0; i < getElectionCount(); i++) {
+      if (elections[i].id == id) {
+        elections[i].title = newTitle;
+        elections[i].endDate = newEndDate;
+        found = true;
+        break;
+      }
+    }
+  
+    require(found, "Election not found");
+
+    emit EditedElectionEvent(
+      newTitle,
+      newEndDate
+    );
+
+    return true;
+  }
+
+  function destroyElection(
+    uint id
+  ) public
+    returns (bool)
+  {
+
+    // verificar se a posição não está sendo utilizada antes de deletar
+
+    for (uint i = 0; i < getElectionCount(); i++) {
+      if (elections[i].id == id) {
+
+        emit DestroyedElectionEvent(
+          elections[i].title
+        );
+
+        elections[i] = elections[getElectionCount() - 1];
+        elections[i].id = id;
+
+        delete elections[getElectionCount() - 1];
+        electionIndexLength--;
+
+        return true;
+
+      }
+    }
+    return false;
+  } 
 
   // Candidate methods
 

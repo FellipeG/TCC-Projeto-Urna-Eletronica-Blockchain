@@ -18,15 +18,15 @@
             </div>
             <div class="row">
                 <div class="col-6">
-                    <base-select v-model="city" :options="cities" label="Cidade" :required="true"></base-select>
+                    <base-select v-model="city" :options="cities" labelText="Cidade" :required="true"></base-select>
                 </div>
                 <div class="col-6">
-                    <base-select v-model="state" :options="states" label="Estado" :required="true"></base-select>
+                    <base-select v-model="state" :options="states" labelText="Estado" :required="true"></base-select>
                 </div>
             </div>
             <div class="row">
                 <div class="col-6">
-                    <base-select v-model="politicalParty" :options="politicalParties" label="Partido Político" :required="true"></base-select>
+                    <base-select v-model="politicalParty" :options="politicalParties" labelText="Partido Político" :required="true"></base-select>
                 </div>
                 <div class="col-6">
                     <base-input v-model="electoralNumber" type="number" label="Número Eleitoral" :required="true"></base-input>

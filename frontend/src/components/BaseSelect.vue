@@ -1,6 +1,6 @@
 <template>
-    <div class="form-group" :class="[{'has-label': label}]">
-        <label v-if="label">{{ label }} <span v-if="required">*</span></label>
+    <div class="form-group" :class="[{'has-label': labelText}]">
+        <label v-if="labelText">{{ labelText }} <span v-if="required">*</span></label>
         <v-select @input="updateValue" :options="options" class="style-chooser" v-bind="$attrs"></v-select>
     </div>
 </template>
@@ -13,7 +13,7 @@ export default {
         }
     },
     props: {
-        label: {
+        labelText: {
             type: String,
             description: "Define o texto de label para o select",
             default: null

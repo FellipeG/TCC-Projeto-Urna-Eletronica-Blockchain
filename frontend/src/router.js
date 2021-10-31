@@ -30,6 +30,10 @@ import PoliticalParties from "./views/political-parties/PoliticalParties";
 import CreatePoliticalParty from "./views/political-parties/CreatePoliticalParty";
 import EditPoliticalParty from "./views/political-parties/EditPoliticalParty";
 
+import Elections from "./views/elections/Elections";
+import CreateElection from './views/elections/CreateElection';
+import EditElection from './views/elections/EditElection';
+
 import ConnectBlockchain from "./views/connect-blockchain/ConnectBlockchain";
 
 Vue.use(Router);
@@ -39,7 +43,7 @@ export default new Router({
   routes: [
     {
       path: "/conectar_blockchain",
-      name: "ConnectBlockchain",
+      name: "conectar_blockchain.index",
       components: {
         header: AppHeader,
         default: ConnectBlockchain,
@@ -48,7 +52,7 @@ export default new Router({
     },
     {
       path: "/",
-      name: "Início",
+      name: "home",
       components: {
         header: AppHeader,
         default: Home,
@@ -79,6 +83,33 @@ export default new Router({
       components: {
         header: AppHeader,
         default: EditCandidate,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/eleicoes",
+      name: "eleicoes.index",
+      components: {
+        header: AppHeader,
+        default: Elections,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/eleicoes/criar",
+      name: "eleicoes.create",
+      components: {
+        header: AppHeader,
+        default: CreateElection,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/eleicoes/editar/:id",
+      name: "eleicoes.edit",
+      components: {
+        header: AppHeader,
+        default: EditElection,
         footer: AppFooter
       }
     },

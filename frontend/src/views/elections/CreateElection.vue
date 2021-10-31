@@ -1,0 +1,106 @@
+<template>
+        <div class="container pt-150">
+            <router-link :to="{'name': 'eleicoes.index'}">
+                <base-button
+                    type="primary"
+                    outline
+                    class="float-right mb-2"
+                    icon="fa fa-arrow-left">Voltar</base-button>
+            </router-link>
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-6">
+                    <base-input label="Título" :required="true" v-model="title"></base-input>
+                </div>
+                <div class="col-6">
+                    <base-input type="datetime-local" label="Data de encerramento" :required="true" v-model="endDate"></base-input>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <base-select
+                        v-model="candidates"
+                        label="fullName"
+                        labelText="Candidatos"
+                        :reduce="(candidate) => candidate.electoralNumber"
+                        :options="candidatesOptions"
+                        :required="true"
+                        multiple></base-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <base-button type="success" @click="add" :block="true">
+                        Cadastrar
+                    </base-button>
+                </div>
+            </div>
+        </div>
+</template>
+
+<script>
+
+import BaseButton from "@/components/BaseButton";
+import BaseInput from "@/components/BaseInput";
+import BaseSelect from '@/components/BaseSelect';
+import { eventHub } from "@/main";
+
+import CandidateService from "@/services/CandidateService";
+import ElectionService from "@/services/ElectionService";
+
+export default {
+    data() {
+        return {
+
+            title: null,
+            endDate: null,
+            candidates: [],
+
+            candidatesOptions: []
+        }
+    },
+    async created() {
+        const candidateServiceResponse = await this.getCandidateService().getAll();
+        this.candidatesOptions = (candidateServiceResponse) ? candidateServiceResponse.data : [];
+    },
+    methods: {
+        getCandidateService() {
+            return new CandidateService(
+                this.$store.state.web3,
+                this.$store.state.contract,
+                this.$store.state.accountAddress
+            )
+        },
+        getElectionService() {
+            return new ElectionService(
+                this.$store.state.web3,
+                this.$store.state.contract,
+                this.$store.state.accountAddress
+            )
+        },
+        async add() {
+            const service = this.getElectionService();
+            service.add(
+                this.title,
+                this.candidates,
+                new Date(this.endDate).getTime()
+            );
+            this.clearInput();
+        },
+        clearInput() {
+            this.title = null;
+            this.candidates = [];
+            this.endDate = null;
+        }
+    },
+    components: {
+        BaseButton,
+        BaseInput,
+        BaseSelect,
+    }
+}
+
+</script>
+
+<style scoped>
+</style>
