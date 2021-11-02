@@ -1,6 +1,6 @@
 <template>
         <div class="container pt-150">
-            <router-link :to="{'name': 'eleicoes.index'}">
+            <router-link :to="{'name': 'votacoes.index'}">
                 <base-button
                     type="primary"
                     outline
@@ -36,7 +36,7 @@ import BaseButton from "@/components/BaseButton";
 import BaseSelect from '@/components/BaseSelect';
 import { eventHub } from "@/main";
 
-import ElectionService from "@/services/ElectionService";
+import VotationService from "@/services/VotationService";
 import AccountService from "@/services/AccountService";
 
 export default {
@@ -55,15 +55,15 @@ export default {
         getAccountService() {
             return new AccountService()
         },
-        getElectionService() {
-            return new ElectionService(
+        getVotationService() {
+            return new VotationService(
                 this.$store.state.web3,
                 this.$store.state.contract,
                 this.$store.state.accountAddress
             )
         },
         async vinculate() {
-            const service = this.getElectionService();
+            const service = this.getVotationService();
             service.add(
                 this.title,
                 this.candidates,

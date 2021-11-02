@@ -30,10 +30,10 @@ import PoliticalParties from "./views/political-parties/PoliticalParties";
 import CreatePoliticalParty from "./views/political-parties/CreatePoliticalParty";
 import EditPoliticalParty from "./views/political-parties/EditPoliticalParty";
 
-import Elections from "./views/elections/Elections";
-import CreateElection from './views/elections/CreateElection';
-import EditElection from './views/elections/EditElection';
-import AddAccountToVote from './views/elections/AddAccountToVote';
+import Votations from "./views/votations/Votations";
+import CreateVotation from './views/votations/CreateVotation';
+import EditVotation from './views/votations/EditVotation';
+import SetVotationAccounts from './views/votations/SetVotationAccounts';
 
 import ConnectBlockchain from "./views/connect-blockchain/ConnectBlockchain";
 
@@ -88,38 +88,38 @@ export default new Router({
       }
     },
     {
-      path: "/eleicoes",
-      name: "eleicoes.index",
+      path: "/votacoes",
+      name: "votacoes.index",
       components: {
         header: AppHeader,
-        default: Elections,
+        default: Votations,
         footer: AppFooter
       }
     },
     {
-      path: "/eleicoes/criar",
-      name: "eleicoes.create",
+      path: "/votacoes/criar",
+      name: "votacoes.create",
       components: {
         header: AppHeader,
-        default: CreateElection,
+        default: CreateVotation,
         footer: AppFooter
       }
     },
     {
-      path: "/eleicoes/editar/:id",
-      name: "eleicoes.edit",
+      path: "/votacoes/editar/:id",
+      name: "votacoes.edit",
       components: {
         header: AppHeader,
-        default: EditElection,
+        default: EditVotation,
         footer: AppFooter
       }
     },
     {
-      path: "/eleicoes/editar/:id/cadastrar_contas",
-      name: "eleicoes.cadastrarContas",
+      path: "/votacoes/editar/:id/definir_contas",
+      name: "votacoes.definirContas",
       components: {
         header: AppHeader,
-        default: AddAccountToVote,
+        default: SetVotationAccounts,
         footer: AppFooter
       }
     },

@@ -1,7 +1,7 @@
 <template>
         <div class="container pt-150">
-            <router-link :to="{'name': 'eleicoes.create'}">
-                <base-button type="primary" outline icon="fa fa-plus" class="float-right mb-2">Cadastrar Eleição</base-button>
+            <router-link :to="{'name': 'votacoes.create'}">
+                <base-button type="primary" outline icon="fa fa-plus" class="float-right mb-2">Cadastrar Votação</base-button>
             </router-link>
             <table class="table table-striped">
                 <thead>
@@ -11,13 +11,13 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody v-if="eleicoes && eleicoes.data.length">
-                    <tr v-for="eleicao in eleicoes.data" :key="eleicao.id">
-                        <td>{{ eleicao.title }}</td>
-                        <td>{{ formatDate(eleicao.endDate) }}</td>
+                <tbody v-if="votacoes && votacoes.data.length">
+                    <tr v-for="votacao in votacoes.data" :key="votacao.id">
+                        <td>{{ votacao.title }}</td>
+                        <td>{{ formatDate(votacao.endDate) }}</td>
                         <td align="right">
 
-                            <router-link :to="{'name': 'eleicoes.cadastrarContas', 'params': {'id': eleicao.id}}">
+                            <router-link :to="{'name': 'votacoes.definirContas', 'params': {'id': votacao.id}}">
                                 <base-button 
                                     type="primary"
                                     class="mr-2"
@@ -27,7 +27,7 @@
                                     :iconOnly="true"></base-button>
                             </router-link>
 
-                            <router-link :to="{'name': 'eleicoes.edit', 'params': {'id': eleicao.id}}">
+                            <router-link :to="{'name': 'votacoes.edit', 'params': {'id': votacao.id}}">
                                 <base-button 
                                     type="warning"
                                     class="mr-2"
@@ -38,7 +38,7 @@
                             </router-link>
 
                             <base-button
-                                @click="openModal(eleicao)"
+                                @click="openModal(votacao)"
                                 type="danger"
                                 outline
                                 size="md"
@@ -49,13 +49,13 @@
                 </tbody>
                 <tbody v-else>
                     <tr>
-                        <td colspan="3">Nenhuma eleição cadastrada</td>
+                        <td colspan="3">Nenhuma votação cadastrada</td>
                     </tr>
                 </tbody>
             </table>
             <div>
                 <base-pagination
-                    :total="(eleicoes) ? parseInt(eleicoes.total) : 0"
+                    :total="(votacoes) ? parseInt(votacoes.total) : 0"
                     :perPage="perPage"
                     :value="page"
                     align="center"
@@ -80,31 +80,31 @@ import BasePagination from "@/components/BasePagination";
 import BaseButton from "@/components/BaseButton";
 import Modal from "@/components/Modal";
 import { eventHub } from "@/main";
-import ElectionService from "@/services/ElectionService";
+import VotationService from "@/services/VotationService";
 
 export default {
     data() {
         return {
-            eleicoes: null,
+            votacoes: null,
             page: 1,
             perPage: 10,
             showModal: false,
-            electionToDestroy: null
+            votationToDestroy: null
         }
     },
     async created() {
-        this.eleicoes = await this.index();
+        this.votacoes = await this.index();
 
-        eventHub.$on("DestroyedElectionEvent", (candidate) => {
+        eventHub.$on("DestroyedVotationEvent", (votation) => {
             this.index().then(response => {
-                this.eleicoes = response;
+                this.votacoes = response;
             });
         });
 
     },
     methods: {
         getService() {
-            return new ElectionService(
+            return new VotationService(
                 this.$store.state.web3,
                 this.$store.state.contract,
                 this.$store.state.accountAddress
@@ -116,24 +116,24 @@ export default {
         },
         async setPage(page) {
             this.page = page;
-            this.eleicoes = await this.index();
+            this.votacoes = await this.index();
         },
-        openModal(election) {
-            this.setElectionToDestroy(election.id);
+        openModal(votation) {
+            this.setVotationToDestroy(votation.id);
             this.showModal = true;
         },
         closeModal() {
-            this.cleanElectionToDestroy();
+            this.cleanVotationToDestroy();
             this.showModal = false;
         },
-        setElectionToDestroy(id) {
-            this.electionToDestroy = id;
+        setVotationToDestroy(id) {
+            this.votationToDestroy = id;
         },
-        cleanElectionToDestroy() {
-            this.electionToDestroy = null;
+        cleanVotationToDestroy() {
+            this.votationToDestroy = null;
         },
         async destroy() {
-            this.getService().destroy(this.electionToDestroy);
+            this.getService().destroy(this.votationToDestroy);
             this.closeModal();
         },
         formatDate(timestamp) {

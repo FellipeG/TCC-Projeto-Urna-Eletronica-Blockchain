@@ -8,10 +8,11 @@ contract Elections {
 
   // structs
 
-  struct Election {
+  struct Votation {
     string id;
     string title;
     string[] candidates;
+    string[] accounts;
     string[] votes;
     string endDate;
     bool initialized;
@@ -48,7 +49,7 @@ contract Elections {
   }
 
   //lengths
-  uint electionIndexLength;
+  uint votationIndexLength;
   uint cityIndexLength;
   uint stateIndexLength;
   uint positionIndexLength;
@@ -56,17 +57,17 @@ contract Elections {
   uint candidateIndexLength;
 
   //events
-  event CreatedElectionEvent(
+  event CreatedVotationEvent(
     string title,
     string[] candidates
   );
 
-  event EditedElectionEvent(
+  event EditedVotationEvent(
     string title,
     string endDate
   );
 
-  event DestroyedElectionEvent(
+  event DestroyedVotationEvent(
     string title
   );
 
@@ -141,7 +142,7 @@ contract Elections {
     string name
   );
 
-  mapping(uint => Election) elections;
+  mapping(uint => Votation) votations;
   mapping(uint => Candidate) candidates;
   mapping(uint => City) cities;
   mapping(uint => PoliticalParty) politicalParties;
@@ -151,7 +152,7 @@ contract Elections {
 
   constructor() public {
     owner = msg.sender;
-    electionIndexLength = 0;
+    votationIndexLength = 0;
     cityIndexLength = 0;
     stateIndexLength = 0;
     positionIndexLength = 0;
@@ -164,105 +165,110 @@ contract Elections {
     _;
   }
 
-  // Election methods
+  // Votation methods
 
-  function addElection(
+  function addVotation(
     string memory title,
-    string[] memory electionCandidates,
+    string[] memory _candidates,
     string memory endDate
   ) public onlyOwner
   {
 
-    string[] memory votes;
+    string[] memory emptyArray;
 
-    elections[electionIndexLength] = Election(
-      uint2str(electionIndexLength),
+    votations[votationIndexLength] = Votation(
+      uint2str(votationIndexLength),
       title,
-      electionCandidates,
-      votes,
+      _candidates,
+      emptyArray,
+      emptyArray,
       endDate,
       true
     );
-    electionIndexLength++;
+    votationIndexLength++;
 
-    emit CreatedElectionEvent(
+    emit CreatedVotationEvent(
       title,
-      electionCandidates
+      _candidates
     );
 
   }
 
-  function getElectionCount()
+  function getVotationCount()
     public
     view
     returns(uint count)
   {
-    return electionIndexLength;
+    return votationIndexLength;
   }
 
-  function getElection(string memory id) 
+  function getVotation(string memory id) 
     public
     view
     returns (
       string memory electionId,
       string memory title,
-      string[] memory electionCandidates,
-      string[] memory electionVotes,
+      string[] memory _candidates,
+      string[] memory accounts,
+      string[] memory votes,
       string memory endDate
     )
   {
 
-    Election memory election;
+    Votation memory votation;
     bool found = false;
 
-    for (uint i = 0; i < getElectionCount(); i++) {
-      if (compareStrings(elections[i].id, id)) {
-        election = elections[i];
+    for (uint i = 0; i < getVotationCount(); i++) {
+      if (compareStrings(votations[i].id, id)) {
+        votation = votations[i];
         found = true;
         break;
       }
     }
 
-    require(found, "Election not found");
+    require(found, "Votation not found");
 
     return(
-      election.id,
-      election.title,
-      election.candidates,
-      election.votes,
-      election.endDate
+      votation.id,
+      votation.title,
+      votation.candidates,
+      votation.accounts,
+      votation.votes,
+      votation.endDate
     );
     
   }
 
-  function getElectionAtIndex(uint index)
+  function getVotationAtIndex(uint index)
     public
     view
     returns(
       string memory id,
       string memory title,
-      string[] memory electionCandidates,
-      string[] memory electionVotes,
+      string[] memory _candidates,
+      string[] memory accounts,
+      string[] memory votes,
       string memory endDate
   )
   {
-    Election memory election = elections[index];
+    Votation memory votation = votations[index];
 
-    require(election.initialized, "Election not found");
+    require(votation.initialized, "Votation not found");
 
     return (
-      election.id,
-      election.title,
-      election.candidates,
-      election.votes,
-      election.endDate
+      votation.id,
+      votation.title,
+      votation.candidates,
+      votation.accounts,
+      votation.votes,
+      votation.endDate
     );
   }
 
-  function updateElection(
+  function updateVotation(
     string memory id,
     string memory newTitle,
-    string[] memory candidates,
+    string[] memory _candidates,
     string memory newEndDate
   ) public
     returns (bool)
@@ -270,19 +276,19 @@ contract Elections {
 
     bool found = false;
 
-    for (uint i = 0; i < getElectionCount(); i++) {
-      if (compareStrings(elections[i].id, id)) {
-        elections[i].title = newTitle;
-        elections[i].endDate = newEndDate;
-        elections[i].candidates = candidates;
+    for (uint i = 0; i < getVotationCount(); i++) {
+      if (compareStrings(votations[i].id, id)) {
+        votations[i].title = newTitle;
+        votations[i].endDate = newEndDate;
+        votations[i].candidates = _candidates;
         found = true;
         break;
       }
     }
   
-    require(found, "Election not found");
+    require(found, "Votation not found");
 
-    emit EditedElectionEvent(
+    emit EditedVotationEvent(
       newTitle,
       newEndDate
     );
@@ -290,7 +296,7 @@ contract Elections {
     return true;
   }
 
-  function destroyElection(
+  function destroyVotation(
     string memory id
   ) public
     returns (bool)
@@ -298,18 +304,18 @@ contract Elections {
 
     // verificar se a posição não está sendo utilizada antes de deletar
 
-    for (uint i = 0; i < getElectionCount(); i++) {
-      if (compareStrings(elections[i].id, id)) {
+    for (uint i = 0; i < getVotationCount(); i++) {
+      if (compareStrings(votations[i].id, id)) {
 
-        emit DestroyedElectionEvent(
-          elections[i].title
+        emit DestroyedVotationEvent(
+          votations[i].title
         );
 
-        elections[i] = elections[getElectionCount() - 1];
-        elections[i].id = id;
+        votations[i] = votations[getVotationCount() - 1];
+        votations[i].id = id;
 
-        delete elections[getElectionCount() - 1];
-        electionIndexLength--;
+        delete votations[getVotationCount() - 1];
+        votationIndexLength--;
 
         return true;
 

@@ -28,7 +28,7 @@
                         <div class="dropdown-divider"></div>
                         <router-link :to="{'name': 'cidades.index'}" class="dropdown-item">Gerenciar Cidades</router-link>
                         <router-link :to="{'name': 'estados.index'}" class="dropdown-item">Gerenciar Estados</router-link>
-                        <router-link :to="{'name': 'eleicoes.index'}" class="dropdown-item">Gerenciar Eleições</router-link>
+                        <router-link :to="{'name': 'votacoes.index'}" class="dropdown-item">Gerenciar Votações</router-link>
                     </base-dropdown>
                 </ul>
         </base-nav>

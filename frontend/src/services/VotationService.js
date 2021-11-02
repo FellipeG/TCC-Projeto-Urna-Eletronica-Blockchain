@@ -1,6 +1,6 @@
 import ServiceUtils from './Utils/ServiceUtils';
 
-class ElectionService 
+class VotationService 
 {
     constructor(web3, contract, accountAddress) {
         this.utils = new ServiceUtils();
@@ -15,19 +15,19 @@ class ElectionService
             let endPosition = page * perPage;
             const initialPosition = endPosition - perPage;
 
-            const total = await this.contract.methods.getElectionCount().call();
+            const total = await this.contract.methods.getVotationCount().call();
 
             if (endPosition > total) {
                 endPosition = total;
             }
             
-            const electionArray = [];
+            const votationArray = [];
             for(let i=initialPosition; i<endPosition; i++) {
-                const obj = await this.contract.methods.getElectionAtIndex(i).call();
-                electionArray.push(obj);
+                const obj = await this.contract.methods.getVotationAtIndex(i).call();
+                votationArray.push(obj);
             }
 
-            return this.utils.paginatedResponse(total, electionArray);
+            return this.utils.paginatedResponse(total, votationArray);
 
         } catch(e) {
             throw e;
@@ -37,7 +37,7 @@ class ElectionService
     async show(id)
     {
         try {
-            const obj = await this.contract.methods.getElection(id).call();
+            const obj = await this.contract.methods.getVotation(id).call();
             return this.utils.response(obj);
         } catch(e) {
             throw e;
@@ -48,16 +48,16 @@ class ElectionService
     {
         try {
 
-            const total = await this.contract.methods.getElectionCount().call();
+            const total = await this.contract.methods.getVotationCount().call();
             
-            const electionArray = [];
+            const votationArray = [];
             for(let i=0; i<total; i++) {
-                const obj = await this.contract.methods.getElectionAtIndex(i).call();
-                candidateArray.push(obj);
+                const obj = await this.contract.methods.getVotationAtIndex(i).call();
+                votationArray.push(obj);
             }
 
             
-            return this.utils.response(electionArray);
+            return this.utils.response(votationArray);
 
         } catch(e) {
             throw e;
@@ -75,7 +75,7 @@ class ElectionService
             // console.log(title, candidates, endDate);
 
             await this.contract.methods
-                .addElection(
+                .addVotation(
                     title,
                     candidates,
                     endDate
@@ -98,7 +98,7 @@ class ElectionService
         try {
 
             await this.contract.methods
-                .updateElection(
+                .updateVotation(
                     id,
                     newTitle,
                     newCandidates,
@@ -116,7 +116,7 @@ class ElectionService
         try {
 
             const response = await this.contract.methods
-                .destroyElection(id)
+                .destroyVotation(id)
                 .send({ from: this.accountAddress })
 
             return this.utils.response(response);
@@ -127,4 +127,4 @@ class ElectionService
     }
 }
 
-export default ElectionService;
+export default VotationService;
