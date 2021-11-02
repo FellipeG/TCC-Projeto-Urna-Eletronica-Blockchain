@@ -10,28 +10,20 @@
             <div class="clearfix"></div>
             <div class="row">
                 <div class="col-6">
-                    <base-input label="Título" :required="true" v-model="title"></base-input>
-                </div>
-                <div class="col-6">
-                    <base-input type="datetime-local" label="Data de encerramento" :required="true" v-model="endDate"></base-input>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
                     <base-select
-                        v-model="candidates"
-                        label="fullName"
-                        labelText="Candidatos"
-                        :reduce="(candidate) => candidate.electoralNumber"
-                        :options="candidatesOptions"
+                        v-model="account"
+                        label="label"
+                        labelText="Contas para Votação"
+                        :reduce="(account) => account.address"
+                        :options="accounts"
                         :required="true"
                         multiple></base-select>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12">
-                    <base-button type="success" @click="add" :block="true">
-                        Cadastrar
+                    <base-button type="success" @click="vinculate" :block="true">
+                        Cadastrar Contas para Votação
                     </base-button>
                 </div>
             </div>
@@ -41,35 +33,27 @@
 <script>
 
 import BaseButton from "@/components/BaseButton";
-import BaseInput from "@/components/BaseInput";
 import BaseSelect from '@/components/BaseSelect';
 import { eventHub } from "@/main";
 
-import CandidateService from "@/services/CandidateService";
 import ElectionService from "@/services/ElectionService";
+import AccountService from "@/services/AccountService";
 
 export default {
     data() {
         return {
-
-            title: null,
-            endDate: null,
-            candidates: [],
-
-            candidatesOptions: []
+            account: null,
+            accounts: [],
+            selectedAccounts: [],
         }
     },
     async created() {
-        const candidateServiceResponse = await this.getCandidateService().getAll();
-        this.candidatesOptions = (candidateServiceResponse) ? candidateServiceResponse.data : [];
+        const accountServiceResponse = await this.getAccountService().get();
+        this.accounts = (accountServiceResponse) ? accountServiceResponse.data : [];
     },
     methods: {
-        getCandidateService() {
-            return new CandidateService(
-                this.$store.state.web3,
-                this.$store.state.contract,
-                this.$store.state.accountAddress
-            )
+        getAccountService() {
+            return new AccountService()
         },
         getElectionService() {
             return new ElectionService(
@@ -78,25 +62,20 @@ export default {
                 this.$store.state.accountAddress
             )
         },
-        async add() {
+        async vinculate() {
             const service = this.getElectionService();
-            const time = new Date(this.endDate).getTime().toString();
             service.add(
                 this.title,
                 this.candidates,
                 time
             );
-            this.clearInput();
         },
         clearInput() {
-            this.title = null;
-            this.candidates = [];
-            this.endDate = null;
+            this.account = null;
         }
     },
     components: {
         BaseButton,
-        BaseInput,
         BaseSelect,
     }
 }

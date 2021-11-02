@@ -33,6 +33,7 @@ import EditPoliticalParty from "./views/political-parties/EditPoliticalParty";
 import Elections from "./views/elections/Elections";
 import CreateElection from './views/elections/CreateElection';
 import EditElection from './views/elections/EditElection';
+import AddAccountToVote from './views/elections/AddAccountToVote';
 
 import ConnectBlockchain from "./views/connect-blockchain/ConnectBlockchain";
 
@@ -110,6 +111,15 @@ export default new Router({
       components: {
         header: AppHeader,
         default: EditElection,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/eleicoes/editar/:id/cadastrar_contas",
+      name: "eleicoes.cadastrarContas",
+      components: {
+        header: AppHeader,
+        default: AddAccountToVote,
         footer: AppFooter
       }
     },

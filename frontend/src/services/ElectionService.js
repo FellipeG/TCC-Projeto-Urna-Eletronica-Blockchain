@@ -67,7 +67,7 @@ class ElectionService
     async add(
         title,
         candidates,
-        // endDate
+        endDate
     ) {
 
         try {
@@ -78,7 +78,7 @@ class ElectionService
                 .addElection(
                     title,
                     candidates,
-                    // endDate
+                    endDate
                 )
                 .send({ from: this.accountAddress })
 
@@ -91,6 +91,7 @@ class ElectionService
     async update(
         id,
         newTitle,
+        newCandidates,
         newEndDate
     ) {
 
@@ -100,6 +101,7 @@ class ElectionService
                 .updateElection(
                     id,
                     newTitle,
+                    newCandidates,
                     newEndDate
                 )
                 .send({ from: this.accountAddress })

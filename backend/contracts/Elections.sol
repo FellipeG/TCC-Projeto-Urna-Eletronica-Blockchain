@@ -9,11 +9,11 @@ contract Elections {
   // structs
 
   struct Election {
-    uint id;
+    string id;
     string title;
     string[] candidates;
     string[] votes;
-    uint endDate;
+    string endDate;
     bool initialized;
   }
 
@@ -63,7 +63,7 @@ contract Elections {
 
   event EditedElectionEvent(
     string title,
-    uint endDate
+    string endDate
   );
 
   event DestroyedElectionEvent(
@@ -168,18 +168,19 @@ contract Elections {
 
   function addElection(
     string memory title,
-    string[] memory electionCandidates
+    string[] memory electionCandidates,
+    string memory endDate
   ) public onlyOwner
   {
 
     string[] memory votes;
 
     elections[electionIndexLength] = Election(
-      electionIndexLength,
+      uint2str(electionIndexLength),
       title,
       electionCandidates,
       votes,
-      1,
+      endDate,
       true
     );
     electionIndexLength++;
@@ -199,14 +200,15 @@ contract Elections {
     return electionIndexLength;
   }
 
-  function getElection(uint id) 
+  function getElection(string memory id) 
     public
     view
     returns (
+      string memory electionId,
       string memory title,
       string[] memory electionCandidates,
       string[] memory electionVotes,
-      uint endDate
+      string memory endDate
     )
   {
 
@@ -214,7 +216,7 @@ contract Elections {
     bool found = false;
 
     for (uint i = 0; i < getElectionCount(); i++) {
-      if (elections[i].id == id) {
+      if (compareStrings(elections[i].id, id)) {
         election = elections[i];
         found = true;
         break;
@@ -224,6 +226,7 @@ contract Elections {
     require(found, "Election not found");
 
     return(
+      election.id,
       election.title,
       election.candidates,
       election.votes,
@@ -236,10 +239,11 @@ contract Elections {
     public
     view
     returns(
+      string memory id,
       string memory title,
       string[] memory electionCandidates,
       string[] memory electionVotes,
-      uint endDate
+      string memory endDate
   )
   {
     Election memory election = elections[index];
@@ -247,6 +251,7 @@ contract Elections {
     require(election.initialized, "Election not found");
 
     return (
+      election.id,
       election.title,
       election.candidates,
       election.votes,
@@ -255,9 +260,10 @@ contract Elections {
   }
 
   function updateElection(
-    uint id,
+    string memory id,
     string memory newTitle,
-    uint newEndDate
+    string[] memory candidates,
+    string memory newEndDate
   ) public
     returns (bool)
   {
@@ -265,9 +271,10 @@ contract Elections {
     bool found = false;
 
     for (uint i = 0; i < getElectionCount(); i++) {
-      if (elections[i].id == id) {
+      if (compareStrings(elections[i].id, id)) {
         elections[i].title = newTitle;
         elections[i].endDate = newEndDate;
+        elections[i].candidates = candidates;
         found = true;
         break;
       }
@@ -284,7 +291,7 @@ contract Elections {
   }
 
   function destroyElection(
-    uint id
+    string memory id
   ) public
     returns (bool)
   {
@@ -292,7 +299,7 @@ contract Elections {
     // verificar se a posição não está sendo utilizada antes de deletar
 
     for (uint i = 0; i < getElectionCount(); i++) {
-      if (elections[i].id == id) {
+      if (compareStrings(elections[i].id, id)) {
 
         emit DestroyedElectionEvent(
           elections[i].title
@@ -965,4 +972,26 @@ contract Elections {
   function compareStrings (string memory a, string memory b) internal view returns (bool){
       return keccak256(bytes(a)) == keccak256(bytes(b));
   }
+
+  function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
+        if (_i == 0) {
+            return "0";
+        }
+        uint j = _i;
+        uint len;
+        while (j != 0) {
+            len++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint k = len;
+        while (_i != 0) {
+            k = k-1;
+            uint8 temp = (48 + uint8(_i - _i / 10 * 10));
+            bytes1 b1 = bytes1(temp);
+            bstr[k] = b1;
+            _i /= 10;
+        }
+        return string(bstr);
+    }
 }

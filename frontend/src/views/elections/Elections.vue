@@ -14,8 +14,19 @@
                 <tbody v-if="eleicoes && eleicoes.data.length">
                     <tr v-for="eleicao in eleicoes.data" :key="eleicao.id">
                         <td>{{ eleicao.title }}</td>
-                        <td>{{ eleicao.endDate }}</td>
+                        <td>{{ formatDate(eleicao.endDate) }}</td>
                         <td align="right">
+
+                            <router-link :to="{'name': 'eleicoes.cadastrarContas', 'params': {'id': eleicao.id}}">
+                                <base-button 
+                                    type="primary"
+                                    class="mr-2"
+                                    outline
+                                    size="md"
+                                    icon="fa fa-plus"
+                                    :iconOnly="true"></base-button>
+                            </router-link>
+
                             <router-link :to="{'name': 'eleicoes.edit', 'params': {'id': eleicao.id}}">
                                 <base-button 
                                     type="warning"
@@ -82,7 +93,7 @@ export default {
         }
     },
     async created() {
-        this.candidates = await this.index();
+        this.eleicoes = await this.index();
 
         eventHub.$on("DestroyedElectionEvent", (candidate) => {
             this.index().then(response => {
@@ -124,6 +135,10 @@ export default {
         async destroy() {
             this.getService().destroy(this.electionToDestroy);
             this.closeModal();
+        },
+        formatDate(timestamp) {
+            const date = new Date(parseInt(timestamp));
+            return date.toLocaleString('pt-BR', {timeZone: 'America/Sao_Paulo'});
         }
     },
     components: {

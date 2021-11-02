@@ -1,13 +1,22 @@
 <template>
     <div class="form-group" :class="[{'has-label': labelText}]">
         <label v-if="labelText">{{ labelText }} <span v-if="required">*</span></label>
-        <v-select @input="updateValue" :options="options" class="style-chooser" v-bind="$attrs"></v-select>
+        <v-select
+            @input="updateValue"
+            append-to-body
+            :calculate-position="withPopper"
+            :options="options"
+            class="style-chooser"
+            v-bind="$attrs"></v-select>
     </div>
 </template>
 
 <script>
 
+import { createPopper } from "@popperjs/core";
+
 export default {
+
     data() {
         return {
         }
@@ -31,6 +40,21 @@ export default {
     methods: {
         updateValue(value) {
             this.$emit('input', value);
+        },
+        withPopper(dropdownList, component, { width }) {
+            dropdownList.style.width = width;
+            const popper = createPopper(component.$refs.toggle, dropdownList, {
+                placement: 'bottom',
+                modifiers: [
+                    {
+                        name: "offset",
+                        options: {
+                        offset: [0, -1]
+                        }
+                    },
+                ]
+            });
+            return () => popper.destroy();
         }
     }
 }
@@ -43,7 +67,11 @@ export default {
         background: #fff;
         border: 1px solid #cad1d7;
         color: #8898aa;
-        height: 46px;
+    }
+
+    .style-chooser .vs__search::placeholder,
+    .style-chooser .vs__dropdown-toggle {
+        min-height: 46px;
     }
 
     .style-chooser .vs__clear,
