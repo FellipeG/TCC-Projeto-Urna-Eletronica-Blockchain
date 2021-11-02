@@ -71,6 +71,11 @@ contract Elections {
     string title
   );
 
+  event SettedVotationAccountsEvent(
+    string title,
+    string[] accounts
+  );
+
   event CreatedCandidateEvent(
     string fullName,
     string birthDate,
@@ -237,6 +242,31 @@ contract Elections {
       votation.endDate
     );
     
+  }
+
+  function setVotationAccounts(
+    string memory id,
+    string[] memory _accounts
+  ) public
+  {
+    Votation memory votation;
+    bool found = false;
+
+    for (uint i = 0; i < getVotationCount(); i++) {
+      if (compareStrings(votations[i].id, id)) {
+        votations[i].accounts = _accounts;
+        votation = votations[i];
+        found = true;
+        break;
+      }
+    }
+
+    require(found, "Votation not found");
+
+    emit SettedVotationAccountsEvent(
+      votation.title,
+      votation.accounts
+    );
   }
 
   function getVotationAtIndex(uint index)

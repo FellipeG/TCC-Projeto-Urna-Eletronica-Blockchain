@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-6">
                     <base-select
-                        v-model="account"
+                        v-model="selectedAccounts"
                         label="label"
                         labelText="Contas para Votação"
                         :reduce="(account) => account.address"
@@ -42,37 +42,34 @@ import AccountService from "@/services/AccountService";
 export default {
     data() {
         return {
-            account: null,
             accounts: [],
-            selectedAccounts: [],
+            selectedAccounts: []
         }
     },
     async created() {
         const accountServiceResponse = await this.getAccountService().get();
+        const votationServiceResponse = await this.getVotationService().show(this.$route.params.id);
         this.accounts = (accountServiceResponse) ? accountServiceResponse.data : [];
+        this.selectedAccounts = (votationServiceResponse) ? votationServiceResponse.data.accounts : [];
     },
     methods: {
         getAccountService() {
-            return new AccountService()
+            return new AccountService();
         },
         getVotationService() {
             return new VotationService(
                 this.$store.state.web3,
                 this.$store.state.contract,
                 this.$store.state.accountAddress
-            )
+            );
         },
         async vinculate() {
             const service = this.getVotationService();
-            service.add(
-                this.title,
-                this.candidates,
-                time
+            service.setVotationAccounts(
+                this.$route.params.id,
+                this.selectedAccounts
             );
         },
-        clearInput() {
-            this.account = null;
-        }
     },
     components: {
         BaseButton,

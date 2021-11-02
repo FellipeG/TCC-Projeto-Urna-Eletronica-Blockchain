@@ -72,8 +72,6 @@ class VotationService
 
         try {
 
-            // console.log(title, candidates, endDate);
-
             await this.contract.methods
                 .addVotation(
                     title,
@@ -124,6 +122,24 @@ class VotationService
         catch (e) {
             throw e;
         }
+    }
+
+    async setVotationAccounts(id, accounts) {
+
+        try {
+
+            await this.contract.methods
+                .setVotationAccounts(
+                    id,
+                    accounts
+                )
+                .send({ from: this.accountAddress })
+
+        }
+        catch (e) {
+            throw e;
+        }
+
     }
 }
 
