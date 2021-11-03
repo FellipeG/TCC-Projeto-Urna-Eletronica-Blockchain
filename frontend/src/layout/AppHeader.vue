@@ -17,9 +17,9 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-icon" href="#">
+                        <router-link class="nav-link nav-link-icon" :to="{'name': 'votar'}">
                             Votar
-                        </a>
+                        </router-link>
                     </li>
                     <base-dropdown tag="li" title="Admin">
                         <router-link :to="{'name': 'candidatos.index'}" class="dropdown-item">Gerenciar Candidatos</router-link>

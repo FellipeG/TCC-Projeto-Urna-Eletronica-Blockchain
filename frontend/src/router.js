@@ -35,6 +35,8 @@ import CreateVotation from './views/votations/CreateVotation';
 import EditVotation from './views/votations/EditVotation';
 import SetVotationAccounts from './views/votations/SetVotationAccounts';
 
+import Vote from "./views/vote/Vote";
+
 import ConnectBlockchain from "./views/connect-blockchain/ConnectBlockchain";
 
 Vue.use(Router);
@@ -57,6 +59,15 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Home,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/votar",
+      name: "votar",
+      components: {
+        header: AppHeader,
+        default: Vote,
         footer: AppFooter
       }
     },
