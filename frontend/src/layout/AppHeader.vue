@@ -11,7 +11,7 @@
                             Home
                         </router-link>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" v-show="!isAccountSetted || isAdmin">
                         <router-link class="nav-link nav-link-icon" :to="{'name': 'conectar_blockchain.index'}">
                             Conectar ao Blockchain
                         </router-link>
@@ -21,7 +21,7 @@
                             Votar
                         </router-link>
                     </li>
-                    <base-dropdown tag="li" title="Admin">
+                    <base-dropdown tag="li" title="Admin" v-show="isAdmin">
                         <router-link :to="{'name': 'candidatos.index'}" class="dropdown-item">Gerenciar Candidatos</router-link>
                         <router-link :to="{'name': 'partidos_politicos.index'}" class="dropdown-item">Gerenciar Partidos Políticos</router-link>
                         <router-link :to="{'name': 'cargos_politicos.index'}" class="dropdown-item">Gerenciar Cargos Políticos</router-link>
@@ -37,11 +37,37 @@
 <script>
 import BaseNav from "@/components/BaseNav";
 import BaseDropdown from '@/components/BaseDropdown.vue';
+import AccountService from "@/services/AccountService";
 
 export default {
     components: {
         BaseNav,
         BaseDropdown
+    },
+    data() {
+        return {
+            adminAccountAddress: this.getAccountService().get().data.shift().address
+        }
+    },
+    methods: {
+        getAccountService() {
+            return new AccountService();
+        }
+    },
+    computed: {
+        isAdmin() {
+            const adminAccountAddress = (this.adminAccountAddress) ? this.adminAccountAddress.toUpperCase() : null;
+            const actualAccountAddress = (this.$store.state.accountAddress) ? this.$store.state.accountAddress.toUpperCase() : null;
+            
+            if (!adminAccountAddress || !actualAccountAddress) {
+                return false;
+            }
+
+            return adminAccountAddress === actualAccountAddress;
+        },
+        isAccountSetted() {
+            return (this.$store.state.accountAddress) ? true : false;
+        }
     }
 };
 </script>
