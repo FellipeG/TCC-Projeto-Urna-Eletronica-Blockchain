@@ -11,7 +11,7 @@
                             Home
                         </router-link>
                     </li>
-                    <li class="nav-item" v-show="!isAccountSetted || isAdmin">
+                    <li class="nav-item">
                         <router-link class="nav-link nav-link-icon" :to="{'name': 'conectar_blockchain.index'}">
                             Conectar ao Blockchain
                         </router-link>
