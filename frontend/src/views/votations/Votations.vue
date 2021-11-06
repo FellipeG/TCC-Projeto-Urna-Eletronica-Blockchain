@@ -7,14 +7,14 @@
                 <thead>
                     <tr>
                         <th>Título</th>
-                        <th>Término</th>
+                        <th>Ativa</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody v-if="votacoes && votacoes.data.length">
                     <tr v-for="votacao in votacoes.data" :key="votacao.id">
                         <td>{{ votacao.title }}</td>
-                        <td>{{ formatDate(votacao.endDate) }}</td>
+                        <td>{{ (votacao.active) ? 'Sim' : 'Não' }}</td>
                         <td align="right">
 
                             <router-link :to="{'name': 'votacoes.definirContas', 'params': {'id': votacao.id}}">
@@ -38,12 +38,22 @@
                             </router-link>
 
                             <base-button
-                                @click="openModal(votacao)"
+                                @click="openModal(votacao, 'inactivateVotation', 'Encerrar Votação')"
+                                type="danger"
+                                outline
+                                size="md"
+                                icon="fa fa-times"
+                                :iconOnly="true"
+                                v-show="votacao.active"></base-button>
+
+                            <base-button
+                                @click="openModal(votacao, 'destroy', 'Deletar')"
                                 type="danger"
                                 outline
                                 size="md"
                                 icon="fa fa-trash"
                                 :iconOnly="true"></base-button>
+
                         </td>
                     </tr>
                 </tbody>
@@ -65,10 +75,10 @@
                 :show="showModal"
                 bodyClasses="d-none"
                 @close="closeModal">
-                <template v-slot:header><strong>Tem certeza que deseja deletar este registro?</strong></template>
+                <template v-slot:header><strong>Tem certeza que deseja realizar esta ação?</strong></template>
                 <template v-slot:footer>
                     <base-button type="primary" outline @click="closeModal">Cancelar</base-button>
-                    <base-button type="danger" @click="destroy()">Deletar</base-button>
+                    <base-button type="danger" @click="modalAction()">{{ modal.btnText }}</base-button>
                 </template>
             </modal>
         </div>
@@ -89,13 +99,23 @@ export default {
             page: 1,
             perPage: 10,
             showModal: false,
-            votationToDestroy: null
+            modal: {
+                method: 'destroy',
+                votation: null,
+                btnText: 'Deletar'
+            }
         }
     },
     async created() {
         this.votacoes = await this.index();
 
         eventHub.$on("DestroyedVotationEvent", (votation) => {
+            this.index().then(response => {
+                this.votacoes = response;
+            });
+        });
+
+        eventHub.$on("InactivatedVotationEvent", (votation) => {
             this.index().then(response => {
                 this.votacoes = response;
             });
@@ -118,27 +138,38 @@ export default {
             this.page = page;
             this.votacoes = await this.index();
         },
-        openModal(votation) {
-            this.setVotationToDestroy(votation.id);
+        openModal(votation, method, btnText) {
+            this.setModalMethod(method);
+            this.setModalBtnText(btnText);
+            this.setModalVotation(votation.id);
             this.showModal = true;
         },
         closeModal() {
-            this.cleanVotationToDestroy();
+            this.cleanModalVotation();
             this.showModal = false;
         },
-        setVotationToDestroy(id) {
-            this.votationToDestroy = id;
+        setModalVotation(id) {
+            this.modal.votation = id;
         },
-        cleanVotationToDestroy() {
-            this.votationToDestroy = null;
+        cleanModalVotation() {
+            this.modal.votation = null;
+        },
+        setModalMethod(method) {
+            this.modal.method = method;
+        },
+        setModalBtnText(btnText) {
+            this.modal.btnText = btnText;
+        },
+        modalAction() {
+            this[this.modal.method]();
         },
         async destroy() {
-            this.getService().destroy(this.votationToDestroy);
+            this.getService().destroy(this.modal.votation);
             this.closeModal();
         },
-        formatDate(timestamp) {
-            const date = new Date(parseInt(timestamp));
-            return date.toLocaleString('pt-BR', {timeZone: 'America/Sao_Paulo'});
+        async inactivateVotation() {
+            this.getService().inactivateVotation(this.modal.votation);
+            this.closeModal();
         }
     },
     components: {

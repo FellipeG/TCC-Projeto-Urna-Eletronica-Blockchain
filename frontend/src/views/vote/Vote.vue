@@ -184,10 +184,6 @@ export default {
                 this.completed = true;
             }
         },
-        formatDateTimestamp(timestamp) {
-            const date = new Date(parseInt(timestamp));
-            return date.toLocaleString('pt-BR', {timeZone: 'America/Sao_Paulo'});
-        },
         cleanInput() {
             this.voto = null;
         },

@@ -66,8 +66,7 @@ class VotationService
 
     async add(
         title,
-        candidates,
-        endDate
+        candidates
     ) {
 
         try {
@@ -75,8 +74,7 @@ class VotationService
             await this.contract.methods
                 .addVotation(
                     title,
-                    candidates,
-                    endDate
+                    candidates
                 )
                 .send({ from: this.accountAddress })
 
@@ -89,8 +87,7 @@ class VotationService
     async update(
         id,
         newTitle,
-        newCandidates,
-        newEndDate
+        newCandidates
     ) {
 
         try {
@@ -99,8 +96,7 @@ class VotationService
                 .updateVotation(
                     id,
                     newTitle,
-                    newCandidates,
-                    newEndDate
+                    newCandidates
                 )
                 .send({ from: this.accountAddress })
         }
@@ -133,6 +129,21 @@ class VotationService
                     id,
                     accounts
                 )
+                .send({ from: this.accountAddress })
+
+        }
+        catch (e) {
+            throw e;
+        }
+
+    }
+
+    async inactivateVotation(id) {
+
+        try {
+
+            await this.contract.methods
+                .inactivateVotation(id)
                 .send({ from: this.accountAddress })
 
         }

@@ -14,7 +14,7 @@ contract Elections {
     string[] candidates;
     string[] accounts;
     string[] votes;
-    string endDate;
+    bool active;
     bool initialized;
   }
 
@@ -63,8 +63,7 @@ contract Elections {
   );
 
   event EditedVotationEvent(
-    string title,
-    string endDate
+    string title
   );
 
   event DestroyedVotationEvent(
@@ -74,6 +73,10 @@ contract Elections {
   event SettedVotationAccountsEvent(
     string title,
     string[] accounts
+  );
+  
+  event InactivatedVotationEvent(
+    string title
   );
 
   event CreatedCandidateEvent(
@@ -174,8 +177,7 @@ contract Elections {
 
   function addVotation(
     string memory title,
-    string[] memory _candidates,
-    string memory endDate
+    string[] memory _candidates
   ) public onlyOwner
   {
 
@@ -187,7 +189,7 @@ contract Elections {
       _candidates,
       emptyArray,
       emptyArray,
-      endDate,
+      true,
       true
     );
     votationIndexLength++;
@@ -216,7 +218,7 @@ contract Elections {
       string[] memory _candidates,
       string[] memory accounts,
       string[] memory votes,
-      string memory endDate
+      bool active
     )
   {
 
@@ -239,7 +241,7 @@ contract Elections {
       votation.candidates,
       votation.accounts,
       votation.votes,
-      votation.endDate
+      votation.active
     );
     
   }
@@ -269,6 +271,29 @@ contract Elections {
     );
   }
 
+  function inactivateVotation(
+    string memory id
+  ) public
+  {
+    Votation memory votation;
+    bool found = false;
+
+    for (uint i = 0; i < getVotationCount(); i++) {
+      if (compareStrings(votations[i].id, id)) {
+        votations[i].active = false;
+        votation = votations[i];
+        found = true;
+        break;
+      }
+    }
+
+    require(found, "Votation not found");
+
+    emit InactivatedVotationEvent(
+      votation.title
+    );
+  }
+
   function getVotationAtIndex(uint index)
     public
     view
@@ -278,7 +303,7 @@ contract Elections {
       string[] memory _candidates,
       string[] memory accounts,
       string[] memory votes,
-      string memory endDate
+      bool active
   )
   {
     Votation memory votation = votations[index];
@@ -291,15 +316,14 @@ contract Elections {
       votation.candidates,
       votation.accounts,
       votation.votes,
-      votation.endDate
+      votation.active
     );
   }
 
   function updateVotation(
     string memory id,
     string memory newTitle,
-    string[] memory _candidates,
-    string memory newEndDate
+    string[] memory _candidates
   ) public
     returns (bool)
   {
@@ -309,7 +333,6 @@ contract Elections {
     for (uint i = 0; i < getVotationCount(); i++) {
       if (compareStrings(votations[i].id, id)) {
         votations[i].title = newTitle;
-        votations[i].endDate = newEndDate;
         votations[i].candidates = _candidates;
         found = true;
         break;
@@ -319,8 +342,7 @@ contract Elections {
     require(found, "Votation not found");
 
     emit EditedVotationEvent(
-      newTitle,
-      newEndDate
+      newTitle
     );
 
     return true;

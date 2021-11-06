@@ -13,11 +13,6 @@
                     <base-input label="Título" :required="true" v-model="title"></base-input>
                 </div>
                 <div class="col-6">
-                    <base-input type="datetime-local" label="Data de encerramento" :required="true" v-model="endDate"></base-input>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
                     <base-select
                         v-model="candidates"
                         label="fullName"
@@ -53,7 +48,6 @@ export default {
         return {
 
             title: null,
-            endDate: null,
             candidates: [],
 
             candidatesOptions: []
@@ -67,9 +61,7 @@ export default {
 
         if (electionServiceResponse) {
             const response = electionServiceResponse.data;
-            const endDate = this.formatDateFromTimestamp(response.endDate);
             this.title = response.title;
-            this.endDate = this.parseDateTimeInputFormat(endDate);
             this.candidates = response._candidates;
         }
     },
@@ -90,24 +82,12 @@ export default {
         },
         async update() {
             const service = this.getVotationService();
-            const time = new Date(this.endDate).getTime().toString();
 
             service.update(
                 this.$route.params.id,
                 this.title,
-                this.candidates,
-                time
+                this.candidates
             );
-        },
-        formatDateFromTimestamp(timestamp) {
-            const date = new Date(parseInt(timestamp));
-            return date.toLocaleString('pt-BR', {timeZone: 'America/Sao_Paulo'});
-        },
-        parseDateTimeInputFormat(datetime) {
-            const dateArray = datetime.split(' ');
-            const date = dateArray[0].split('/').reverse().join('-');
-            const time = dateArray[1].split(':');
-            return `${date}T${time[0]}:${time[1]}`;
         }
     },
     components: {

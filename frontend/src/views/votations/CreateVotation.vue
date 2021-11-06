@@ -13,11 +13,6 @@
                     <base-input label="Título" :required="true" v-model="title"></base-input>
                 </div>
                 <div class="col-6">
-                    <base-input type="datetime-local" label="Data de encerramento" :required="true" v-model="endDate"></base-input>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
                     <base-select
                         v-model="candidates"
                         label="fullName"
@@ -53,7 +48,6 @@ export default {
         return {
 
             title: null,
-            endDate: null,
             candidates: [],
 
             candidatesOptions: []
@@ -80,18 +74,16 @@ export default {
         },
         async add() {
             const service = this.getVotationService();
-            const time = new Date(this.endDate).getTime().toString();
+
             service.add(
                 this.title,
-                this.candidates,
-                time
+                this.candidates
             );
             this.clearInput();
         },
         clearInput() {
             this.title = null;
             this.candidates = [];
-            this.endDate = null;
         }
     },
     components: {
