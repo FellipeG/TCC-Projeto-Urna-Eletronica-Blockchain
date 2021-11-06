@@ -294,6 +294,26 @@ contract Elections {
     );
   }
 
+  function setVotes(
+    string memory id,
+    string memory vote
+  ) public
+  {
+    Votation memory votation;
+    bool found = false;
+
+    for (uint i = 0; i < getVotationCount(); i++) {
+      if (compareStrings(votations[i].id, id)) {
+        votations[i].votes[votations[i].votes.length] = vote;
+        votation = votations[i];
+        found = true;
+        break;
+      }
+    }
+
+    require(found, "Votation not found");
+  }
+
   function getVotationAtIndex(uint index)
     public
     view

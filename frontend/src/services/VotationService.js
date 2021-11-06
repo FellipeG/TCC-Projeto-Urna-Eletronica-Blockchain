@@ -152,6 +152,21 @@ class VotationService
         }
 
     }
+
+    async setVote(id, vote) {
+
+        try {
+
+            await this.contract.methods
+                .setVote(id, vote)
+                .send({ from: this.accountAddress })
+
+        }
+        catch (e) {
+            throw e;
+        }
+
+    }
 }
 
 export default VotationService;

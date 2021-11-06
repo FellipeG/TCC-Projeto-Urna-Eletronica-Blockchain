@@ -118,7 +118,6 @@ export default {
     data() {
         return {
             voto: null,
-            votos: [],
             votacaoPosition: 0,
             votacoes: [],
             candidate: null,
@@ -138,11 +137,20 @@ export default {
             this.getVotations().then((response) => {
                 this.votacoes = response;
                 this.voto = null;
-                this.votos = [];
                 this.votacaoPosition = 0;
                 this.candidate = null;
                 this.completed = false;
             })
+        });
+
+        eventHub.$on('SettedVote', (votation) => {
+            ++this.votacaoPosition;
+            this.cleanInput();
+            this.closeModal();
+
+            if (!this.etapaVotacao) {
+                this.completed = true;
+            }
         });
     },
     methods: {
@@ -168,21 +176,16 @@ export default {
                 : [];
 
             return data.filter((votation) => {
+                const accountAddress = this.$store.state.accountAddress;
                 const accounts = votation.accounts.map((account) => account.toLowerCase());
-                return accounts.indexOf(this.$store.state.accountAddress) !== -1
+                return accounts.indexOf(accountAddress) !== -1 
+                    && votation.active
+                    && votation.votes.indexOf(accountAddress) === -1
             });
         },
         vote() {
-            ++this.votacaoPosition;
-
             const computedVote = (this.modal.isBlankVote) ? null : this.voto;
-            this.votos.push(computedVote);
-            this.cleanInput();
-            this.closeModal();
-
-            if (!this.etapaVotacao) {
-                this.completed = true;
-            }
+            this.getService().setVote(this.etapaVotacao.id, computedVote);
         },
         cleanInput() {
             this.voto = null;
