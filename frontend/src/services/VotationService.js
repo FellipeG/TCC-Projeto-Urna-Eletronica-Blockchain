@@ -158,7 +158,7 @@ class VotationService
         try {
 
             await this.contract.methods
-                .setVote(id, vote)
+                .setVote(id, vote, this.accountAddress)
                 .send({ from: this.accountAddress })
 
         }

@@ -14,6 +14,7 @@ contract Elections {
     string[] candidates;
     string[] accounts;
     string[] votes;
+    string[] vottedAccounts;
     bool active;
     bool initialized;
   }
@@ -76,6 +77,10 @@ contract Elections {
   );
   
   event InactivatedVotationEvent(
+    string title
+  );
+
+  event SettedVoteEvent(
     string title
   );
 
@@ -189,6 +194,7 @@ contract Elections {
       _candidates,
       emptyArray,
       emptyArray,
+      emptyArray,
       true,
       true
     );
@@ -218,6 +224,7 @@ contract Elections {
       string[] memory _candidates,
       string[] memory accounts,
       string[] memory votes,
+      string[] memory vottedAccounts,
       bool active
     )
   {
@@ -241,6 +248,7 @@ contract Elections {
       votation.candidates,
       votation.accounts,
       votation.votes,
+      votation.vottedAccounts,
       votation.active
     );
     
@@ -249,7 +257,7 @@ contract Elections {
   function setVotationAccounts(
     string memory id,
     string[] memory _accounts
-  ) public
+  ) onlyOwner public
   {
     Votation memory votation;
     bool found = false;
@@ -294,24 +302,38 @@ contract Elections {
     );
   }
 
-  function setVotes(
+  function setVote(
     string memory id,
-    string memory vote
+    string memory vote,
+    string memory account
   ) public
   {
-    Votation memory votation;
+    
     bool found = false;
+    Votation memory votation;
 
     for (uint i = 0; i < getVotationCount(); i++) {
       if (compareStrings(votations[i].id, id)) {
-        votations[i].votes[votations[i].votes.length] = vote;
+
+        string[] storage votationArray = votations[i].votes;
+        string[] storage vottedAccountsArray = votations[i].vottedAccounts;
+
+        votationArray.push(vote);
+        vottedAccountsArray.push(account);
+
+        votations[i].votes = votationArray;
+        votations[i].vottedAccounts = vottedAccountsArray;
         votation = votations[i];
+
         found = true;
+
         break;
       }
     }
 
     require(found, "Votation not found");
+
+    emit SettedVoteEvent(votation.title);
   }
 
   function getVotationAtIndex(uint index)
@@ -323,6 +345,7 @@ contract Elections {
       string[] memory _candidates,
       string[] memory accounts,
       string[] memory votes,
+      string[] memory vottedAccounts,
       bool active
   )
   {
@@ -336,6 +359,7 @@ contract Elections {
       votation.candidates,
       votation.accounts,
       votation.votes,
+      votation.vottedAccounts,
       votation.active
     );
   }
@@ -345,6 +369,7 @@ contract Elections {
     string memory newTitle,
     string[] memory _candidates
   ) public
+    onlyOwner
     returns (bool)
   {
 

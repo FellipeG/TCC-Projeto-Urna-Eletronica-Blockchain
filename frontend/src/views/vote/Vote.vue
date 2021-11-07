@@ -136,14 +136,14 @@ export default {
         eventHub.$on('changeAccount', (account) => {
             this.getVotations().then((response) => {
                 this.votacoes = response;
-                this.voto = null;
+                this.voto = '';
                 this.votacaoPosition = 0;
                 this.candidate = null;
                 this.completed = false;
             })
         });
 
-        eventHub.$on('SettedVote', (votation) => {
+        eventHub.$on('SettedVoteEvent', (votation) => {
             ++this.votacaoPosition;
             this.cleanInput();
             this.closeModal();
@@ -180,15 +180,15 @@ export default {
                 const accounts = votation.accounts.map((account) => account.toLowerCase());
                 return accounts.indexOf(accountAddress) !== -1 
                     && votation.active
-                    && votation.votes.indexOf(accountAddress) === -1
+                    && votation.vottedAccounts.indexOf(accountAddress) === -1
             });
         },
         vote() {
-            const computedVote = (this.modal.isBlankVote) ? null : this.voto;
+            const computedVote = (this.modal.isBlankVote) ? '' : this.voto;
             this.getService().setVote(this.etapaVotacao.id, computedVote);
         },
         cleanInput() {
-            this.voto = null;
+            this.voto = '';
         },
         formatDate(date) {
             return date.split('-').reverse().join('/');
