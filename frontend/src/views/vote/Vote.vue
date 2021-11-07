@@ -134,13 +134,20 @@ export default {
         this.votacoes = await this.getVotations();
 
         eventHub.$on('changeAccount', (account) => {
+
+            this.voto = '';
+            this.votacaoPosition = 0;
+            this.votacoes = [];
+            this.candidate = null;
+            this.completed = false;
+
+            this.cleanInput();
+            this.closeModal();
+
             this.getVotations().then((response) => {
                 this.votacoes = response;
-                this.voto = '';
-                this.votacaoPosition = 0;
-                this.candidate = null;
-                this.completed = false;
-            })
+            });
+
         });
 
         eventHub.$on('SettedVoteEvent', (votation) => {
