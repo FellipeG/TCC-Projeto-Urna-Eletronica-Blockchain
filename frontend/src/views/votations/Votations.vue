@@ -46,6 +46,16 @@
                                 :iconOnly="true"
                                 v-show="votacao.active"></base-button>
 
+                            <router-link :to="{'name': 'votacoes.chart', 'params': {'id': votacao.id}}">
+                                <base-button
+                                    outline
+                                    size="md"
+                                    class="mr-2"
+                                    icon="fa fa-bar-chart"
+                                    :iconOnly="true"
+                                    v-show="!votacao.active"></base-button>
+                            </router-link>
+
                             <base-button
                                 @click="openModal(votacao, 'destroy', 'Deletar')"
                                 type="danger"

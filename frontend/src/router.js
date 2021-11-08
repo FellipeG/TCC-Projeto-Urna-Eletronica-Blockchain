@@ -34,6 +34,7 @@ import Votations from "./views/votations/Votations";
 import CreateVotation from './views/votations/CreateVotation';
 import EditVotation from './views/votations/EditVotation';
 import SetVotationAccounts from './views/votations/SetVotationAccounts';
+import Chart from './views/votations/Chart';
 
 import Vote from "./views/vote/Vote";
 
@@ -131,6 +132,15 @@ export default new Router({
       components: {
         header: AppHeader,
         default: SetVotationAccounts,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/votacoes/grafico/:id",
+      name: "votacoes.chart",
+      components: {
+        header: AppHeader,
+        default: Chart,
         footer: AppFooter
       }
     },
