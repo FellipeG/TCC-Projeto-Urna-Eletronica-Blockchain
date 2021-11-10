@@ -52,11 +52,59 @@ import VotationService from "@/services/VotationService";
 export default {
     data() {
         return {
+            votation: null,
+            candidates: []
         }
     },
     async created() {
+
+        const votationService = await this.getVotationService().show(this.$routes.params.id);
+        const candidateService = await this.getCandidateService().getAll();
+
+        this.votations = (votationService) ? votationService.data : null;
+        this.candidates = (candidateService) ? candidateService.data : [];
     },
     methods: {
+        getVotationService() {
+            return new VotationService();
+        },
+        getCandidateService() {
+            return new CandidateService();
+        },
+        getVotes() {
+            return (this.votation) ? this.votation.votes : [];
+        },
+        getBlankVotes() {
+            return (this.votation) ? this.votation.votes.filter((vote) => !vote.length) : [];
+        },
+        getNullVotes() {
+            return (this.votation) ? this.votation.votes.filter((vote) => !vote.includes(vote._candidates)) : [];
+        },
+        getValidVotes() {
+            return (this.votation) ? this.votation.votes.filter((vote) => vote.includes(vote._candidates)) : [];
+        },
+        getValidVotesCountPerElectoralNumber() {
+
+            const arr = this.getValidVotes();
+            const votes = [];
+
+            let candidate;
+
+            arr.forEach((vote) => {
+
+                candidate = this.candidates.filter((candidate) => candidate.electoralNumber == vote).shift();
+
+                votes[vote]['times'] = ++(votes[vote]['times'] || 0);
+                votes[vote]['candidate'] = candidate || null;
+
+            });
+
+            return votes;
+        },
+        calculatePercentual(candidateVotes) {
+            const percentage = 100 * candidateVotes / this.getVotes().length;
+            return percentage.toFixed(2);
+        }
     },
     components: {
         BaseProgress
