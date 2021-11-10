@@ -11,24 +11,9 @@
             <div class="table-responsive">
                 <table class="table table-borderless">
                     <tbody>
-                        <tr>
+                        <tr v-for="voteObj in validVotes" :key="voteObj.candidate">
                             <td colspan="2">
-                                <base-progress :value="49.83" label="Fellipe J. R. Garcias - 3000 Votos" type="primary" :animated="true" :striped="true"></base-progress>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <base-progress :value="49.83" label="Erick V. Sousa Carvalho - 3000 Votos" type="primary" :animated="true" :striped="true"></base-progress>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <base-progress :value="0.17" label="Brancos - 10 Votos" type="primary" :animated="true" :striped="true"></base-progress>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <base-progress :value="0.17" label="Nulos - 10 Votos" type="primary" :animated="true" :striped="true"></base-progress>
+                                <base-progress :value="calculatePercentual(voteObj.votes)" :label="`${voteObj.candidate} - ${voteObj.votes} Votos`" type="primary" :animated="true" :striped="true"></base-progress>
                             </td>
                         </tr>
                     </tbody>
@@ -41,69 +26,105 @@
 
 import BaseProgress from "@/components/BaseProgress";
 
-import BaseButton from "@/components/BaseButton";
-import BaseInput from "@/components/BaseInput";
-import BaseSelect from '@/components/BaseSelect';
-import { eventHub } from "@/main";
-
 import CandidateService from "@/services/CandidateService";
 import VotationService from "@/services/VotationService";
 
 export default {
     data() {
+
         return {
-            votation: null,
-            candidates: []
+            candidates: [],
+            votation: null
         }
     },
     async created() {
 
-        const votationService = await this.getVotationService().show(this.$routes.params.id);
         const candidateService = await this.getCandidateService().getAll();
+        const votationService = await this.getVotationService().show(this.$route.params.id);
 
-        this.votations = (votationService) ? votationService.data : null;
-        this.candidates = (candidateService) ? candidateService.data : [];
+        this.candidates = (candidateService) ? candidateService.data : [],
+        this.votation = (votationService) ? votationService.data : null
+
     },
     methods: {
         getVotationService() {
-            return new VotationService();
+            return new VotationService(
+                this.$store.state.web3,
+                this.$store.state.contract,
+                this.$store.state.accountAddress
+            );
         },
         getCandidateService() {
-            return new CandidateService();
-        },
-        getVotes() {
-            return (this.votation) ? this.votation.votes : [];
-        },
-        getBlankVotes() {
-            return (this.votation) ? this.votation.votes.filter((vote) => !vote.length) : [];
-        },
-        getNullVotes() {
-            return (this.votation) ? this.votation.votes.filter((vote) => !vote.includes(vote._candidates)) : [];
-        },
-        getValidVotes() {
-            return (this.votation) ? this.votation.votes.filter((vote) => vote.includes(vote._candidates)) : [];
-        },
-        getValidVotesCountPerElectoralNumber() {
-
-            const arr = this.getValidVotes();
-            const votes = [];
-
-            let candidate;
-
-            arr.forEach((vote) => {
-
-                candidate = this.candidates.filter((candidate) => candidate.electoralNumber == vote).shift();
-
-                votes[vote]['times'] = ++(votes[vote]['times'] || 0);
-                votes[vote]['candidate'] = candidate || null;
-
-            });
-
-            return votes;
+            return new CandidateService(
+                this.$store.state.web3,
+                this.$store.state.contract,
+                this.$store.state.accountAddress
+            );
         },
         calculatePercentual(candidateVotes) {
-            const percentage = 100 * candidateVotes / this.getVotes().length;
-            return percentage.toFixed(2);
+            if (!this.votes.length) return 0;
+            const percentage = 100 * candidateVotes / this.votes.length;
+            return parseFloat(percentage.toFixed(2));
+        },
+        getValidVotes() {
+            return (this.votation) ? this.votation._candidates.filter((candidate) => this.votation.votes.includes(candidate)) : [];
+        },
+    },
+    computed: {
+        votes() {
+            return (this.votation) ? this.votation.votes : [];
+        },
+        blankVotes() {
+            return (this.votation) ? this.votation.votes.filter((vote) => !vote.length) : [];
+        },
+        nullVotes() {
+            return (this.votation) ? this.votation.votes.filter((vote) => !this.votation._candidates.includes(vote) && vote.length) : [];
+        },
+        validVotes() {
+
+            const validVotes = this.getValidVotes();
+            const notVottedCandidates = (this.votation) ? this.votation._candidates.filter((candidate) => !this.votation.votes.includes(candidate)) : [];
+            const voteCount = {};
+            const voteObjs = [];
+            
+            let candidate;
+
+
+            validVotes.forEach((vote) => {
+                voteCount[vote] = (voteCount[vote] || 0) + 1;
+            });
+
+            notVottedCandidates.forEach((electoralNumber) => {
+                voteCount[electoralNumber] = 0;
+            });
+
+            const votes = [...validVotes, ...notVottedCandidates];
+
+            const uniqueVotes = (validVotes.length || notVottedCandidates.length)
+                ? [...new Set(votes)]
+                : [];
+
+            uniqueVotes.forEach((vote) => {
+
+                candidate = this.candidates.filter((candidate) => candidate.electoralNumber == vote).shift();
+                
+                voteObjs.push({
+                    candidate: (candidate) ? candidate.fullName : null,
+                    votes: voteCount[vote]
+                });
+            });
+
+            voteObjs.push({
+                candidate: 'Brancos',
+                votes: this.blankVotes.length
+            });
+
+            voteObjs.push({
+                candidate: 'Nulos',
+                votes: this.nullVotes.length
+            });
+
+            return voteObjs.sort((vote1, vote2) => vote2.votes - vote1.votes);
         }
     },
     components: {
