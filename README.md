@@ -76,7 +76,7 @@ O projeto poderá ser acessado através da URL: http://localhost:8080
 ![image](https://user-images.githubusercontent.com/29721231/141221834-5c7207d8-c030-4067-8283-16a9445a8d3a.png)
 
 10. Importe algumas contas de eleitor para utilizar o sistema de votação:
- - Copie o endereço de qualquer conta da listagem de contas, clique no usuário no menu superior direito, selecione a opção `Importar contas`  
+ - Copie o endereço de qualquer conta da listagem de contas (especificada mais acima), clique no usuário no menu superior direito, selecione a opção `Importar contas`  
 ![image](https://user-images.githubusercontent.com/29721231/141228861-3a7733ef-2578-4756-a990-3f14e0f2a515.png)
 
 - Deixe o tipo como `Chave privada`, cole a chave copiada anteriormente no campo e clique em `Importar`  
