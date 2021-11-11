@@ -71,7 +71,7 @@ O projeto poderá ser acessado através da URL: http://localhost:8080
 
 ![image](https://user-images.githubusercontent.com/29721231/141220965-56dfc6a2-f620-483d-9bef-dc5bba7d057d.png)
 
-9. Parabéns! Você verá sua conta de administrador (Conta 1) sendo exibida na listagem.
+9. A conta de administrador (Conta 1) será exibida na listagem
 
 ![image](https://user-images.githubusercontent.com/29721231/141221834-5c7207d8-c030-4067-8283-16a9445a8d3a.png)
 
