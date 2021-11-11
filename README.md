@@ -10,11 +10,43 @@ Este projeto destina-se a implementar um sistema de urna eletrônica que utilize
 2. Para entrar no container, execute `docker-compose exec app sh`
 3. Execute o comando `sh init.sh 1` para iniciar o projeto.
 
+O projeto poderá ser acessado através da URL: http://localhost:8080
+
 ## Executar testes unitários
 
 * Execute o comando `sh init.sh 2`
 
 # Metamask
+
+### Contas
+
+```
+0xedeaba9c96f82f94055e827f6091fe8fa076cdcd82b74e3eabaeeb580e7c6524
+```
+```
+0xdaf9d566669832fc4659ff902d0191908e790c0a85cc262cda07bf55b4a68f92
+```
+```
+0xea32b36b7dbdb7a45c1993c8ab63ef320554b1503c3d8526d68b20cc5c0cc3a4
+```
+```
+0x1ab195d18fc1bae24cce8a205e455b5fb867418c29d86efc7a2d14fd52a7c92a
+```
+```
+0x25afe14a9c253bbcce3aa54b4b6d8b17f6e5f434350e382adfec6fff8f51d0d2
+```
+```
+0x493e96499b8cdb54b45a48bcdc303f2fd0a3ba786d88e34af4ca96380fdd6a1b
+```
+```
+0x45382de1d9cf26271ad8ea11581e6c01c3a9210aad2e2633bfb295673a9c2df3
+```
+```
+0xb4569937e446920703bd7659240d120482bd4a4f58d48afa4c84857899799240
+```
+```
+0xe0f550a4819043ec6037c9ffcb0cb397d649c6ed91499748d828174cd5c5e398
+```
 
 ### Instalação e configuração
 
@@ -43,7 +75,20 @@ Este projeto destina-se a implementar um sistema de urna eletrônica que utilize
 
 ![image](https://user-images.githubusercontent.com/29721231/141221834-5c7207d8-c030-4067-8283-16a9445a8d3a.png)
 
+10. Importe algumas contas de eleitor para utilizar o sistema de votação:
+ - Copie o endereço de qualquer conta da listagem de contas, clique no usuário no menu superior direito, selecione a opção `Importar contas`
+![image](https://user-images.githubusercontent.com/29721231/141228861-3a7733ef-2578-4756-a990-3f14e0f2a515.png)
+
+- Deixe o tipo como `Chave privada`, cole a chave copiada anteriormente no campo e clique em `Importar`
+![image](https://user-images.githubusercontent.com/29721231/141228814-47fded36-074e-426a-bd81-3182715b781e.png)
+
+
 ### Gerenciamento de Contas
+
+Para mudar a conta utilizada no sistema, clique no ícone do metamask no navegador, selecione o menu do usuário e escolha o usuário desejado
+
+![image](https://user-images.githubusercontent.com/29721231/141230187-a8237f32-f926-47a5-93c4-a3d30d09a5f0.png)
+
 
 
 
