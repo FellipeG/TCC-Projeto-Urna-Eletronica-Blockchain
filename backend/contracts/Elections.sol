@@ -419,20 +419,23 @@ contract Elections {
     returns (bool)
   {
 
+    Votation memory votation;
+
     // verificar se a posição não está sendo utilizada antes de deletar
 
     for (uint i = 0; i < getVotationCount(); i++) {
       if (compareStrings(votations[i].id, id)) {
 
-        emit DestroyedVotationEvent(
-          votations[i].title
-        );
-
+        votation = votations[i];
         votations[i] = votations[getVotationCount() - 1];
         votations[i].id = id;
 
         delete votations[getVotationCount() - 1];
         votationIndexLength--;
+
+        emit DestroyedVotationEvent(
+          votation.title
+        );
 
         return true;
 
@@ -624,20 +627,23 @@ contract Elections {
     returns (bool)
   {
 
+    Candidate memory candidate;
+
     // verificar se a posição não está sendo utilizada antes de deletar
 
     for (uint i = 0; i < getCandidateCount(); i++) {
       if (compareStrings(candidates[i].electoralNumber, electoralNumber)) {
 
-        emit DestroyedCandidateEvent(
-          candidates[i].fullName,
-          candidates[i].electoralNumber
-        );
-
+        candidate = candidates[i];
         candidates[i] = candidates[getCandidateCount() - 1];
 
         delete candidates[getCandidateCount() - 1];
         candidateIndexLength--;
+
+        emit DestroyedCandidateEvent(
+          candidate.fullName,
+          candidate.electoralNumber
+        );
 
         return true;
 
