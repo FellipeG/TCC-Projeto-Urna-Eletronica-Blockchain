@@ -178,12 +178,18 @@ contract Elections {
     _;
   }
 
+  modifier notOwner {
+    require(owner == msg.sender, "The owner can not update that information");
+    _;
+  }
+
   // Votation methods
 
   function addVotation(
     string memory title,
     string[] memory _candidates
-  ) public onlyOwner
+  ) public
+    onlyOwner
   {
 
     string[] memory emptyArray;
@@ -257,7 +263,8 @@ contract Elections {
   function setVotationAccounts(
     string memory id,
     string[] memory _accounts
-  ) onlyOwner public
+  ) public
+    onlyOwner
   {
     Votation memory votation;
     bool found = false;
@@ -282,6 +289,7 @@ contract Elections {
   function inactivateVotation(
     string memory id
   ) public
+    onlyOwner
   {
     Votation memory votation;
     bool found = false;
@@ -307,6 +315,7 @@ contract Elections {
     string memory vote,
     string memory account
   ) public
+    notOwner
   {
     
     bool found = false;
@@ -396,6 +405,7 @@ contract Elections {
   function destroyVotation(
     string memory id
   ) public
+    onlyOwner
     returns (bool)
   {
 
@@ -430,7 +440,8 @@ contract Elections {
     string memory state,
     string memory city,
     string memory electoralNumber
-  ) public onlyOwner
+  ) public
+    onlyOwner
   {
 
     for (uint i = 0; i < getCandidateCount(); i++) {
@@ -544,6 +555,7 @@ contract Elections {
     string memory newCity,
     string memory newElectoralNumber
   ) public
+    onlyOwner
     returns (bool)
   {
 
@@ -579,6 +591,7 @@ contract Elections {
   function destroyCandidate(
     string memory electoralNumber
   ) public
+    onlyOwner
     returns (bool)
   {
 
@@ -608,7 +621,9 @@ contract Elections {
 
   function addCity(
     string memory cityName
-  ) public onlyOwner {
+  ) public
+    onlyOwner
+  {
 
     for (uint i = 0; i < getCityCount(); i++) {
       require(!compareStrings(cities[i].name, cityName), "The city name must be unique");
@@ -674,6 +689,7 @@ contract Elections {
     string memory oldCity,
     string memory newCity
   ) public
+    onlyOwner
     returns (bool)
   {
 
@@ -695,6 +711,7 @@ contract Elections {
   function destroyCity(
     string memory city
   ) public
+    onlyOwner
     returns (bool)
   {
 
@@ -719,7 +736,9 @@ contract Elections {
 
   function addPoliticalParty(
     string memory name
-  ) public onlyOwner {
+  ) public
+    onlyOwner
+  {
 
     for (uint i = 0; i < politicalPartyIndexLength; i++) {
       require(!compareStrings(politicalParties[i].name, name), "The political party must be unique");
@@ -783,6 +802,7 @@ contract Elections {
     string memory oldPoliticalParty,
     string memory newPoliticalParty
   ) public
+    onlyOwner
     returns (bool)
   {
 
@@ -804,6 +824,7 @@ contract Elections {
   function destroyPoliticalParty(
     string memory politicalParty
   ) public
+    onlyOwner
     returns (bool)
   {
 
@@ -828,7 +849,9 @@ contract Elections {
 
   function addPosition(
     string memory position
-  ) public onlyOwner {
+  ) public
+    onlyOwner
+  {
 
     for (uint i = 0; i < positionIndexLength; i++) {
       require(!compareStrings(positions[i].name, position), "The position must be unique");
@@ -844,6 +867,7 @@ contract Elections {
     string memory oldPosition,
     string memory newPosition
   ) public
+    onlyOwner
     returns (bool)
   {
 
@@ -865,6 +889,7 @@ contract Elections {
   function destroyPosition(
     string memory position
   ) public
+    onlyOwner
     returns (bool)
   {
 
@@ -936,7 +961,9 @@ contract Elections {
 
   function addState(
     string memory stateName
-  ) public onlyOwner {
+  ) public
+    onlyOwner
+  {
 
     for (uint i = 0; i < stateIndexLength; i++) {
       require(!compareStrings(states[i].name, stateName), "The state name must be unique");
@@ -1004,6 +1031,7 @@ contract Elections {
     string memory oldState,
     string memory newState
   ) public
+    onlyOwner
     returns (bool)
   {
 
@@ -1025,6 +1053,7 @@ contract Elections {
   function destroyState(
     string memory state
   ) public
+    onlyOwner
     returns (bool)
   {
 
@@ -1048,35 +1077,58 @@ contract Elections {
   /***************************
   * Helper validation methods*
   /***************************/
-  function getPoliticalPartyValidation(
-  string memory name) private returns (bool) {
+  function getPoliticalPartyValidation(string memory name)
+    private
+    view
+    returns (bool)
+  {
     getPoliticalParty(name);
     return true;
   }
 
-  function getPositionValidation(string memory name) private returns (bool) {
-    //getPosition(name);
+  function getPositionValidation(string memory name)
+    private
+    view
+    returns (bool) 
+  {
+    getPosition(name);
     return true;
   }
 
-  function getStateValidation(string memory name) private returns (bool) {
+  function getStateValidation(string memory name)
+    private
+    view
+    returns (bool)
+  {
     if (keccak256(bytes(name)) == keccak256('')) { return true; }
     getState(name);
     return true;
   }
 
-  function getCityValidation(string memory name) private returns (bool) {
+  function getCityValidation(string memory name)
+    private
+    view
+    returns (bool)
+  {
     if (keccak256(bytes(name)) == keccak256('')) { return true; }
     getCity(name);
     return true;
   }
 
   // utils
-  function compareStrings (string memory a, string memory b) internal view returns (bool){
+  function compareStrings(string memory a, string memory b)
+    internal
+    pure
+    returns (bool)
+  {
       return keccak256(bytes(a)) == keccak256(bytes(b));
   }
 
-  function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
+  function uint2str(uint _i)
+    internal
+    pure
+    returns (string memory _uintAsString)
+  {
         if (_i == 0) {
             return "0";
         }
