@@ -194,7 +194,7 @@ contract Elections {
 
     string[] memory emptyArray;
 
-    validateRequiredField(title, "Title field is required");
+    require(compareStrings(title, '') == false, "Title field is required");
     require(_candidates.length != 0, "Candidate field is required");
 
     votations[votationIndexLength] = Votation(
@@ -269,6 +269,9 @@ contract Elections {
   ) public
     onlyOwner
   {
+
+    require(_accounts.length != 0, "Accounts are required");
+
     Votation memory votation;
     bool found = false;
 
@@ -320,7 +323,8 @@ contract Elections {
   ) public
     notOwner
   {
-    
+    require(compareStrings(account, ''), "Account is required");
+
     bool found = false;
     Votation memory votation;
 
@@ -385,6 +389,9 @@ contract Elections {
     returns (bool)
   {
 
+    require(compareStrings(newTitle, '') == false, "Title field is required");
+    require(_candidates.length != 0, "Candidate field is required");
+
     bool found = false;
 
     for (uint i = 0; i < getVotationCount(); i++) {
@@ -446,12 +453,19 @@ contract Elections {
   ) public
     onlyOwner
   {
+    
+    // Validations
+    require(compareStrings(fullName, '') == false, "fullName field is required");
+    require(compareStrings(birthDate, '') == false, "birthDate field is required");
+    require(compareStrings(politicalParty, '') == false, "politicalParty field is required");
+    require(compareStrings(state, '') == false, "state field is required");
+    require(compareStrings(city, '') == false, "city field is required");
+    require(compareStrings(electoralNumber, '') == false, "electoralNumber field is required");
 
     for (uint i = 0; i < getCandidateCount(); i++) {
       require(!compareStrings(candidates[i].electoralNumber, electoralNumber), "The electoral number must be unique");
     }
 
-    // Validations
     getPoliticalPartyValidation(politicalParty);
     getStateValidation(state);
     getCityValidation(city);
@@ -562,6 +576,18 @@ contract Elections {
     returns (bool)
   {
 
+    // Validations
+    require(compareStrings(newFullName, '') == false, "fullName field is required");
+    require(compareStrings(newBirthDate, '') == false, "birthDate field is required");
+    require(compareStrings(newPoliticalParty, '') == false, "politicalParty field is required");
+    require(compareStrings(newState, '') == false, "state field is required");
+    require(compareStrings(newCity, '') == false, "city field is required");
+    require(compareStrings(newElectoralNumber, '') == false, "electoralNumber field is required");
+
+    getPoliticalPartyValidation(newPoliticalParty);
+    getStateValidation(newState);
+    getCityValidation(newCity);
+
     bool found = false;
 
     for (uint i = 0; i < getCandidateCount(); i++) {
@@ -627,6 +653,8 @@ contract Elections {
   ) public
     onlyOwner
   {
+
+    require(compareStrings(cityName, '') == false, "cityName field is required");
 
     for (uint i = 0; i < getCityCount(); i++) {
       require(!compareStrings(cities[i].name, cityName), "The city name must be unique");
@@ -696,6 +724,8 @@ contract Elections {
     returns (bool)
   {
 
+    require(compareStrings(newCity, '') == false, "cityName field is required");
+
     bool found = false;
 
     for (uint i = 0; i < getCityCount(); i++) {
@@ -742,6 +772,8 @@ contract Elections {
   ) public
     onlyOwner
   {
+
+    require(compareStrings(name, '') == false, "politicalParty name field is required");
 
     for (uint i = 0; i < politicalPartyIndexLength; i++) {
       require(!compareStrings(politicalParties[i].name, name), "The political party must be unique");
@@ -809,6 +841,8 @@ contract Elections {
     returns (bool)
   {
 
+    require(compareStrings(newPoliticalParty, '') == false, "politicalParty name field is required");
+
     bool found = false;
 
     for (uint i = 0; i < getPoliticalPartyCount(); i++) {
@@ -856,6 +890,8 @@ contract Elections {
     onlyOwner
   {
 
+    require(compareStrings(position, '') == false, "position name field is required");
+
     for (uint i = 0; i < positionIndexLength; i++) {
       require(!compareStrings(positions[i].name, position), "The position must be unique");
     }
@@ -873,6 +909,8 @@ contract Elections {
     onlyOwner
     returns (bool)
   {
+
+    require(compareStrings(newPosition, '') == false, "position name field is required");
 
     bool found = false;
 
@@ -968,6 +1006,8 @@ contract Elections {
     onlyOwner
   {
 
+    require(compareStrings(stateName, '') == false, "state name field is required");
+
     for (uint i = 0; i < stateIndexLength; i++) {
       require(!compareStrings(states[i].name, stateName), "The state name must be unique");
     }
@@ -1038,6 +1078,8 @@ contract Elections {
     returns (bool)
   {
 
+    require(compareStrings(newState, '') == false, "state name field is required");
+
     bool found = false;
 
     for (uint i = 0; i < getStateCount(); i++) {
@@ -1103,7 +1145,6 @@ contract Elections {
     view
     returns (bool)
   {
-    if (keccak256(bytes(name)) == keccak256('')) { return true; }
     getState(name);
     return true;
   }
@@ -1113,7 +1154,6 @@ contract Elections {
     view
     returns (bool)
   {
-    if (keccak256(bytes(name)) == keccak256('')) { return true; }
     getCity(name);
     return true;
   }
@@ -1124,7 +1164,7 @@ contract Elections {
     pure
     returns (bool)
   {
-      return keccak256(bytes(a)) == keccak256(bytes(b));
+    return keccak256(bytes(a)) == keccak256(bytes(b));
   }
 
   function uint2str(uint _i)
@@ -1132,32 +1172,24 @@ contract Elections {
     pure
     returns (string memory _uintAsString)
   {
-        if (_i == 0) {
-            return "0";
-        }
-        uint j = _i;
-        uint len;
-        while (j != 0) {
-            len++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(len);
-        uint k = len;
-        while (_i != 0) {
-            k = k-1;
-            uint8 temp = (48 + uint8(_i - _i / 10 * 10));
-            bytes1 b1 = bytes1(temp);
-            bstr[k] = b1;
-            _i /= 10;
-        }
-        return string(bstr);
+    if (_i == 0) {
+        return "0";
     }
-
-    function validateRequiredField(string memory value, string memory exceptionMessage)
-      internal
-      pure
-    {
-      require(compareString(value, ''), exceptionMessage);
-      _;
+    uint j = _i;
+    uint len;
+    while (j != 0) {
+        len++;
+        j /= 10;
     }
+    bytes memory bstr = new bytes(len);
+    uint k = len;
+    while (_i != 0) {
+        k = k-1;
+        uint8 temp = (48 + uint8(_i - _i / 10 * 10));
+        bytes1 b1 = bytes1(temp);
+        bstr[k] = b1;
+        _i /= 10;
+    }
+    return string(bstr);
+  }
 }
