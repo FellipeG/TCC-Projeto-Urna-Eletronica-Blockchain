@@ -33,7 +33,7 @@ import PositionService from "@/services/PositionService";
 export default {
     data() {
         return {
-            positionName: null
+            positionName: ''
         }
     },
     methods: {
@@ -50,7 +50,7 @@ export default {
             this.clearInput();
         },
         clearInput() {
-            this.positionName = null;
+            this.positionName = '';
         }
     },
     components: {

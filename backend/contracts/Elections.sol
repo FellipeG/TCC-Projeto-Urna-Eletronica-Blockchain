@@ -194,6 +194,9 @@ contract Elections {
 
     string[] memory emptyArray;
 
+    validateRequiredField(title, "Title field is required");
+    require(_candidates.length != 0, "Candidate field is required");
+
     votations[votationIndexLength] = Votation(
       uint2str(votationIndexLength),
       title,
@@ -1148,5 +1151,13 @@ contract Elections {
             _i /= 10;
         }
         return string(bstr);
+    }
+
+    function validateRequiredField(string memory value, string memory exceptionMessage)
+      internal
+      pure
+    {
+      require(compareString(value, ''), exceptionMessage);
+      _;
     }
 }

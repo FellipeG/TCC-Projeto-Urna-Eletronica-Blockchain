@@ -33,7 +33,7 @@ import StateService from "@/services/StateService";
 export default {
     data() {
         return {
-            stateName: null
+            stateName: ''
         }
     },
     methods: {
@@ -50,7 +50,7 @@ export default {
             this.clearInput();
         },
         clearInput() {
-            this.stateName = null;
+            this.stateName = '';
         }
     },
     components: {

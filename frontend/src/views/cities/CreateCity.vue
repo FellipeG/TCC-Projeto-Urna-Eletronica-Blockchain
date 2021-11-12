@@ -33,7 +33,7 @@ import CityService from "@/services/CityService";
 export default {
     data() {
         return {
-            cityName: null
+            cityName: ''
         }
     },
     methods: {
@@ -50,7 +50,7 @@ export default {
             this.clearInput();
         },
         clearInput() {
-            this.cityName = null;
+            this.cityName = '';
         }
     },
     components: {

@@ -47,7 +47,7 @@ export default {
     data() {
         return {
 
-            title: null,
+            title: '',
             candidates: [],
 
             candidatesOptions: []
@@ -82,7 +82,7 @@ export default {
             this.clearInput();
         },
         clearInput() {
-            this.title = null;
+            this.title = '';
             this.candidates = [];
         }
     },

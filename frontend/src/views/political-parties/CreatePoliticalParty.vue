@@ -33,7 +33,7 @@ import PoliticalPartyService from "@/services/PoliticalPartyService";
 export default {
     data() {
         return {
-            politicalPartyName: null
+            politicalPartyName: ''
         }
     },
     methods: {
@@ -50,7 +50,7 @@ export default {
             this.clearInput();
         },
         clearInput() {
-            this.politicalPartyName = null;
+            this.politicalPartyName = '';
         }
     },
     components: {

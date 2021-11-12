@@ -117,7 +117,7 @@ import CandidateService from "@/services/CandidateService";
 export default {
     data() {
         return {
-            voto: null,
+            voto: '',
             votacaoPosition: 0,
             votacoes: [],
             candidate: null,
