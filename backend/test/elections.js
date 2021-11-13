@@ -599,11 +599,20 @@ contract("Elections", accounts => {
       politicalParty: 'Partido X',
       state: 'RJ',
       city: 'Rio de Janeiro',
-      electoralNumber: '44'
+      electoralNumber: '44',
+      newElectoralNumber: '55'
     };
 
-    it('1. O candidato não deve ser cadastrado por um usuário não autorizado', () => {
-        return Elections.deployed()
+
+    it('1. O candidato não deve ser cadastrado por um usuário não autorizado', async() => {
+
+      const instance = await Elections.deployed();
+
+      await instance.addPoliticalParty(candidateObj.politicalParty);
+      await instance.addState(candidateObj.state);
+      await instance.addCity(candidateObj.city);
+
+      return Elections.deployed()
         .then((instance) => {
           return instance.addCandidate(
             candidateObj.fullName,
@@ -647,7 +656,7 @@ contract("Elections", accounts => {
           candidateObj.fullName,
           candidateObj.birthDate,
           candidateObj.politicalParty,
-          'MT',
+          'Estado Inválido',
           candidateObj.city,
           candidateObj.electoralNumber,
           { from: accounts[0] }
@@ -667,7 +676,7 @@ contract("Elections", accounts => {
           candidateObj.birthDate,
           candidateObj.politicalParty,
           candidateObj.state,
-          'Mato Grosso',
+          'Cidade Inválida',
           candidateObj.electoralNumber,
           { from: accounts[0] }
         );
@@ -678,9 +687,124 @@ contract("Elections", accounts => {
       })
     });
 
-    it('5. O candidato deve ser cadastrado', async() => {
+    it('5. O candidato não deve ser cadastrado com o nome vazio', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addCandidate(
+          '',
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          candidateObj.state,
+          candidateObj.city,
+          candidateObj.electoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Full name field is required') !== -1);
+      })
+    });
+
+    it('6. O candidato não deve ser cadastrado com a data de nascimento vazia', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addCandidate(
+          candidateObj.fullName,
+          '',
+          candidateObj.politicalParty,
+          candidateObj.state,
+          candidateObj.city,
+          candidateObj.electoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Birthdate field is required') !== -1);
+      })
+    });
+
+    it('7. O candidato não deve ser cadastrado com o partido político vazio', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addCandidate(
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          '',
+          candidateObj.state,
+          candidateObj.city,
+          candidateObj.electoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Political party field is required') !== -1);
+      })
+    });
+
+    it('8. O candidato não deve ser cadastrado com o estado vazio', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addCandidate(
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          '',
+          candidateObj.city,
+          candidateObj.electoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('State field is required') !== -1);
+      })
+    });
+
+    it('9. O candidato não deve ser cadastrado com a cidade vazia', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addCandidate(
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          candidateObj.state,
+          '',
+          candidateObj.electoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('City field is required') !== -1);
+      })
+    });
+
+    it('10. O candidato não deve ser cadastrado com o número de eleitor vazio', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addCandidate(
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          candidateObj.state,
+          candidateObj.city,
+          '',
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Electoral number field is required') !== -1);
+      })
+    });
+
+    it('11. O candidato deve ser cadastrado', async() => {
 
       const instance = await Elections.deployed();
+
       await instance.addCandidate(
         candidateObj.fullName,
         candidateObj.birthDate,
@@ -695,7 +819,7 @@ contract("Elections", accounts => {
       assert.equal(candidate[5], candidateObj.electoralNumber);
     });
 
-    it('6. O candidato não deve ser cadastrado por ser duplicado', () => {
+    it('12. O candidato não deve ser cadastrado por ser duplicado', () => {
       return Elections.deployed()
       .then((instance) => {
         return instance.addCandidate(
@@ -714,7 +838,7 @@ contract("Elections", accounts => {
       })
     });
 
-    it('7. Deve ocorrer erro ao buscar por um candidato não existente', () => {
+    it('13. Deve ocorrer erro ao buscar por um candidato não existente', () => {
       return Elections.deployed()
       .then((instance) => {
         return instance.getCandidate('000000', { from: accounts[0] });
@@ -725,11 +849,278 @@ contract("Elections", accounts => {
       })
     });
 
-    it('8. Deve retornar sucesso ao buscar por um candidato', async () => {
+    it('14. Deve retornar sucesso ao buscar por um candidato', async () => {
       const instance = await Elections.deployed();
       const candidate = await instance.getCandidate(candidateObj.electoralNumber);
       assert.equal(candidate[5], candidateObj.electoralNumber);
     });
+
+    it('15. O candidato não deve ser atualizado por um usuário não autorizado', () => {
+
+      return Elections.deployed()
+        .then((instance) => {
+          return instance.updateCandidate(
+            candidateObj.electoralNumber,
+            candidateObj.fullName,
+            candidateObj.birthDate,
+            candidateObj.politicalParty,
+            candidateObj.state,
+            candidateObj.city,
+            candidateObj.newElectoralNumber,
+            { from: accounts[1] }
+          );
+        })
+        .then(assert.fail)
+        .catch((e) => {
+          assert(e.message.indexOf('Only the owner can update that information') !== -1);
+        })
+    });
+
+    it('16. O candidato não deve ser atualizado por ter um partido político inválido', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.updateCandidate(
+          candidateObj.electoralNumber,
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          'Partido Y',
+          candidateObj.state,
+          candidateObj.city,
+          candidateObj.newElectoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Political party not found') !== -1);
+      })
+    });
+
+    it('17. O candidato não deve ser atualizado por ter um estado inválido', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.updateCandidate(
+          candidateObj.electoralNumber,
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          'Estado Inválido',
+          candidateObj.city,
+          candidateObj.newElectoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('State not found') !== -1);
+      })
+    });
+
+    it('18. O candidato não deve ser atualizado por ter uma cidade inválida', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.updateCandidate(
+          candidateObj.electoralNumber,
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          candidateObj.state,
+          'Cidade Inválida',
+          candidateObj.newElectoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('City not found') !== -1);
+      })
+    });
+
+    it('19. O candidato não deve ser atualizado com o nome vazio', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.updateCandidate(
+          candidateObj.electoralNumber,
+          '',
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          candidateObj.state,
+          candidateObj.city,
+          candidateObj.newElectoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Full name field is required') !== -1);
+      })
+    });
+
+    it('20. O candidato não deve ser atualizado com a data de nascimento vazia', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.updateCandidate(
+          candidateObj.electoralNumber,
+          candidateObj.fullName,
+          '',
+          candidateObj.politicalParty,
+          candidateObj.state,
+          candidateObj.city,
+          candidateObj.newElectoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Birthdate field is required') !== -1);
+      })
+    });
+
+    it('21. O candidato não deve ser atualizado com o partido político vazio', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.updateCandidate(
+          candidateObj.electoralNumber,
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          '',
+          candidateObj.state,
+          candidateObj.city,
+          candidateObj.newElectoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Political party field is required') !== -1);
+      })
+    });
+
+    it('22. O candidato não deve ser atualizado com o estado vazio', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.updateCandidate(
+          candidateObj.electoralNumber,
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          '',
+          candidateObj.city,
+          candidateObj.newElectoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('State field is required') !== -1);
+      })
+    });
+
+    it('23. O candidato não deve ser atualizado com a cidade vazia', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.updateCandidate(
+          candidateObj.electoralNumber,
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          candidateObj.state,
+          '',
+          candidateObj.newElectoralNumber,
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('City field is required') !== -1);
+      })
+    });
+
+    it('24. O candidato não deve ser atualizado com o número de eleitor vazio', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.updateCandidate(
+          candidateObj.electoralNumber,
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          candidateObj.state,
+          candidateObj.city,
+          '',
+          { from: accounts[0] }
+        );
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Electoral number field is required') !== -1);
+      })
+    });
+
+    it('24. O candidato deve ser atualizado', async() => {
+
+      const instance = await Elections.deployed();
+
+      await instance.updateCandidate(
+        candidateObj.electoralNumber,
+        candidateObj.fullName,
+        candidateObj.birthDate,
+        candidateObj.politicalParty,
+        candidateObj.state,
+        candidateObj.city,
+        candidateObj.newElectoralNumber,
+        { from: accounts[0] }
+      );
+
+      const candidate = await instance.getCandidate(candidateObj.newElectoralNumber);
+      assert.equal(candidate[5], candidateObj.newElectoralNumber);
+    });
+
+    it('25. O candidato não deve ser atualizado por estar vinculado a uma votação', async() => {
+
+      const instance = await Elections.deployed();
+
+      await instance.addVotation('Prefeito - Votação', [candidateObj.newElectoralNumber]);
+
+      try {
+        await instance.updateCandidate(
+          candidateObj.newElectoralNumber,
+          candidateObj.fullName,
+          candidateObj.birthDate,
+          candidateObj.politicalParty,
+          candidateObj.state,
+          candidateObj.city,
+          candidateObj.newElectoralNumber,
+          { from: accounts[0] }
+        );
+      } catch(e) {
+        assert(e.message.indexOf("Can't update a vinculated candidate") !== -1)
+      }
+    });
+
+    it('26. O candidato não deve ser deletado por estar vinculado a uma votação', async() => {
+
+      const instance = await Elections.deployed();
+
+      try {
+        await instance.destroyCandidate(candidateObj.newElectoralNumber, { from: accounts[0] });
+      } catch(e) {
+        assert(e.message.indexOf("Can't delete a vinculated candidate") !== -1)
+      }
+    });
+
+    it('27. O candidato deve ser deletado', async() => {
+
+      const instance = await Elections.deployed();
+
+      try {
+        await instance.destroyVotation('0');
+        const response = await instance.destroyCandidate.call(candidateObj.newElectoralNumber, { from: accounts[0] });
+        assert.equal(response, true);
+      } catch(e) {
+        assert(false);
+      }
+    });
+
 
   });
 

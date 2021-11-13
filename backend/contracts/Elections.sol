@@ -442,12 +442,12 @@ contract Elections {
   {
     
     // Validations
-    require(compareStrings(fullName, '') == false, "fullName field is required");
-    require(compareStrings(birthDate, '') == false, "birthDate field is required");
-    require(compareStrings(politicalParty, '') == false, "politicalParty field is required");
-    require(compareStrings(state, '') == false, "state field is required");
-    require(compareStrings(city, '') == false, "city field is required");
-    require(compareStrings(electoralNumber, '') == false, "electoralNumber field is required");
+    require(compareStrings(fullName, '') == false, "Full name field is required");
+    require(compareStrings(birthDate, '') == false, "Birthdate field is required");
+    require(compareStrings(politicalParty, '') == false, "Political party field is required");
+    require(compareStrings(state, '') == false, "State field is required");
+    require(compareStrings(city, '') == false, "City field is required");
+    require(compareStrings(electoralNumber, '') == false, "Electoral number field is required");
 
     for (uint i = 0; i < getCandidateCount(); i++) {
       require(!compareStrings(candidates[i].electoralNumber, electoralNumber), "The electoral number must be unique");
@@ -568,12 +568,12 @@ contract Elections {
     bool isCandidateAlreadyVotted = checkIfCandidateIsUsed(oldElectoralNumber);
 
     require(!isCandidateAlreadyVotted, "Can't update a vinculated candidate");
-    require(compareStrings(newFullName, '') == false, "fullName field is required");
-    require(compareStrings(newBirthDate, '') == false, "birthDate field is required");
-    require(compareStrings(newPoliticalParty, '') == false, "politicalParty field is required");
-    require(compareStrings(newState, '') == false, "state field is required");
-    require(compareStrings(newCity, '') == false, "city field is required");
-    require(compareStrings(newElectoralNumber, '') == false, "electoralNumber field is required");
+    require(compareStrings(newFullName, '') == false, "Full name field is required");
+    require(compareStrings(newBirthDate, '') == false, "Birthdate field is required");
+    require(compareStrings(newPoliticalParty, '') == false, "Political party field is required");
+    require(compareStrings(newState, '') == false, "State field is required");
+    require(compareStrings(newCity, '') == false, "City field is required");
+    require(compareStrings(newElectoralNumber, '') == false, "Electoral number field is required");
 
     getPoliticalPartyValidation(newPoliticalParty);
     getStateValidation(newState);
