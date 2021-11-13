@@ -257,6 +257,9 @@ contract Elections {
 
     for (uint i = 0; i < getVotationCount(); i++) {
       if (compareStrings(votations[i].id, id)) {
+
+        require(votations[i].active, "Can't set votation accounts to an inactive votation");
+        
         votations[i].accounts = _accounts;
         votation = votations[i];
         found = true;
@@ -303,7 +306,7 @@ contract Elections {
   ) public
     notOwner
   {
-    
+
     bool found = false;
     Votation memory votation;
 
