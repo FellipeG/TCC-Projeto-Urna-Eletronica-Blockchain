@@ -113,59 +113,6 @@ contract("Elections", accounts => {
 
   });
 
-  describe('Cargos', () => {
-    const name = 'Governador';
-
-    it('1. O cargo não deve ser cadastrado por um usuário não autorizado', () => {
-        return Elections.deployed()
-        .then((instance) => {
-          return instance.addPosition(name, { from: accounts[1] });
-        })
-        .then(assert.fail)
-        .catch((e) => {
-          assert(e.message.indexOf('Only the owner can update that information') !== -1);
-        })
-    });
-
-    it('2. O cargo deve ser cadastrado', async() => {
-
-      const instance = await Elections.deployed();
-      await instance.addPosition(name, { from: accounts[0] });
-
-      const position = await instance.getPosition(name);
-      assert.equal(position, name);
-    });
-
-    it('3. O cargo não deve ser cadastrado por ser duplicado', () => {
-      return Elections.deployed()
-      .then((instance) => {
-        return instance.addPosition(name, { from: accounts[0] });
-      })
-      .then(assert.fail)
-      .catch((e) => {
-        assert(e.message.indexOf('The position must be unique') !== -1);
-      })
-    });
-
-    it('4. Deve ocorrer erro ao buscar por um cargo não existente', () => {
-      return Elections.deployed()
-      .then((instance) => {
-        return instance.getPosition('Vereador', { from: accounts[0] });
-      })
-      .then(assert.fail)
-      .catch((e) => {
-        assert(e.message.indexOf('Position not found') !== -1);
-      })
-    });
-
-    it('5. Deve retornar sucesso ao buscar por um cargo existente', async () => {
-      const instance = await Elections.deployed();
-      const position = await instance.getPosition(name);
-      assert.equal(position, name);
-    });
-
-  });
-
   describe('Partidos Políticos', () => {
     const name = 'Partido X';
 
@@ -322,64 +269,7 @@ contract("Elections", accounts => {
       assert.equal(candidate[5], candidateObj.electoralNumber);
     });
 
-    it('6. O candidato deve ser cadastrado com estado em branco', async() => {
-
-      const electoralNumber = '00001';
-
-      const instance = await Elections.deployed();
-      await instance.addCandidate(
-        candidateObj.fullName,
-        candidateObj.birthDate,
-        candidateObj.politicalParty,
-        '',
-        candidateObj.city,
-        electoralNumber,
-        { from: accounts[0] }
-      );
-
-      const candidate = await instance.getCandidate(electoralNumber);
-      assert.equal(candidate[5], electoralNumber);
-    });
-
-    it('7. O candidato deve ser cadastrado com cidade em branco', async() => {
-
-      const electoralNumber = '00002';
-
-      const instance = await Elections.deployed();
-      await instance.addCandidate(
-        candidateObj.fullName,
-        candidateObj.birthDate,
-        candidateObj.politicalParty,
-        candidateObj.state,
-        '',
-        electoralNumber,
-        { from: accounts[0] }
-      );
-
-      const candidate = await instance.getCandidate(electoralNumber);
-      assert.equal(candidate[5], electoralNumber);
-    });
-
-    it('8. O candidato deve ser cadastrado com cidade e estado em branco', async() => {
-
-      const electoralNumber = '00003';
-
-      const instance = await Elections.deployed();
-      await instance.addCandidate(
-        candidateObj.fullName,
-        candidateObj.birthDate,
-        candidateObj.politicalParty,
-        '',
-        '',
-        electoralNumber,
-        { from: accounts[0] }
-      );
-
-      const candidate = await instance.getCandidate(electoralNumber);
-      assert.equal(candidate[5], electoralNumber);
-    });
-
-    it('9. O candidato não deve ser cadastrado por ser duplicado', () => {
+    it('6. O candidato não deve ser cadastrado por ser duplicado', () => {
       return Elections.deployed()
       .then((instance) => {
         return instance.addCandidate(
@@ -398,7 +288,7 @@ contract("Elections", accounts => {
       })
     });
 
-    it('10. Deve ocorrer erro ao buscar por um candidato não existente', () => {
+    it('7. Deve ocorrer erro ao buscar por um candidato não existente', () => {
       return Elections.deployed()
       .then((instance) => {
         return instance.getCandidate('000000', { from: accounts[0] });
@@ -409,7 +299,7 @@ contract("Elections", accounts => {
       })
     });
 
-    it('11. Deve retornar sucesso ao buscar por um candidato', async () => {
+    it('8. Deve retornar sucesso ao buscar por um candidato', async () => {
       const instance = await Elections.deployed();
       const candidate = await instance.getCandidate(candidateObj.electoralNumber);
       assert.equal(candidate[5], candidateObj.electoralNumber);
