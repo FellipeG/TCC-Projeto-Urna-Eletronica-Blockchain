@@ -1056,7 +1056,7 @@ contract("Elections", accounts => {
       })
     });
 
-    it('24. O candidato deve ser atualizado', async() => {
+    it('25. O candidato deve ser atualizado', async() => {
 
       const instance = await Elections.deployed();
 
@@ -1075,7 +1075,7 @@ contract("Elections", accounts => {
       assert.equal(candidate[5], candidateObj.newElectoralNumber);
     });
 
-    it('25. O candidato não deve ser atualizado por estar vinculado a uma votação', async() => {
+    it('26. O candidato não deve ser atualizado por estar vinculado a uma votação', async() => {
 
       const instance = await Elections.deployed();
 
@@ -1097,7 +1097,7 @@ contract("Elections", accounts => {
       }
     });
 
-    it('26. O candidato não deve ser deletado por estar vinculado a uma votação', async() => {
+    it('27. O candidato não deve ser deletado por estar vinculado a uma votação', async() => {
 
       const instance = await Elections.deployed();
 
@@ -1108,7 +1108,7 @@ contract("Elections", accounts => {
       }
     });
 
-    it('27. O candidato deve ser deletado', async() => {
+    it('28. O candidato deve ser deletado', async() => {
 
       const instance = await Elections.deployed();
 
@@ -1119,6 +1119,222 @@ contract("Elections", accounts => {
       } catch(e) {
         assert(false);
       }
+    });
+
+  });
+
+  describe('Votações', () => {
+    const votation = {
+      title: 'Prefeito',
+      candidates: [accounts[0]]
+    };
+
+
+    it('1. A votação não deve ser cadastrada por um usuário não autorizado', async() => {
+
+      try {
+
+        const instance = await Elections.deployed();
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[1] });
+      } catch(e) {
+          assert(e.message.indexOf('Only the owner can update that information') !== -1);
+      }
+
+    });
+
+    it('2. A votação não deve ser cadastrada por estar com o campo título vazio', async() => {
+      
+      try {
+
+        const instance = await Elections.deployed();
+        await instance.addVotation('', votation.candidates, { from: accounts[0] });
+      } catch(e) {
+          assert(e.message.indexOf('Title field is required') !== -1);
+      }
+
+    });
+
+    it('3. A votação não deve ser cadastrada por estar com o campo candidatos vazio', async() => {
+      
+      try {
+
+        const instance = await Elections.deployed();
+        await instance.addVotation(votation.title, [], { from: accounts[0] });
+      } catch(e) {
+          assert(e.message.indexOf('Candidate field is required') !== -1);
+      }
+
+    });
+
+    it('4. A votação deve ser cadastrada', async() => {
+    
+      const instance = await Elections.deployed();
+      const response = await instance.addVotation.call(votation.title, votation.candidates, { from: accounts[0] });
+
+      assert.equal(response, true);
+
+    });
+
+    it('5. A votação não deve ser atualizada por um usuário não autorizado', async() => {
+
+      try {
+
+        const instance = await Elections.deployed();
+        await instance.updateVotation('0', votation.title, votation.candidates, { from: accounts[1] });
+      } catch(e) {
+          assert(e.message.indexOf('Only the owner can update that information') !== -1);
+      }
+
+    });
+
+    it('6 A votação não deve ser atualizada por estar com o campo título vazio', async() => {
+      
+      try {
+
+        const instance = await Elections.deployed();
+        await instance.updateVotation('0', '', votation.candidates, { from: accounts[0] });
+      } catch(e) {
+          assert(e.message.indexOf('Title field is required') !== -1);
+      }
+
+    });
+
+    it('7. A votação não deve ser atualizada por estar com o campo candidatos vazio', async() => {
+      
+      try {
+
+        const instance = await Elections.deployed();
+        await instance.updateVotation('0', votation.title, [], { from: accounts[0] });
+      } catch(e) {
+          assert(e.message.indexOf('Candidate field is required') !== -1);
+      }
+
+    });
+
+    it('8. A votação não deve ser atualizada por conter votos', async() => {
+      try {
+        
+        const instance = await Elections.deployed();
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        await instance.setVotationAccounts('0', [accounts[1]], { from: accounts[0] });
+
+      } catch(e) {
+        assert(e.message.indexOf("Can't update a started votation") !== -1);
+      }
+    });
+
+    it('9. A votação deve ser atualizada', async() => {
+      try {
+
+        const instance = await Elections.deployed();
+        const response = await instance.updateVotation.call('0', votation.title, votation.candidates, { from: accounts[0] });
+
+      assert.equal(response, true);
+      } catch(e) {
+        assert(false);
+      }
+
+    });
+
+    it('10. A votação não deve ser deletada por um usuário não autorizado', async() => {
+
+      try {
+
+        const instance = await Elections.deployed();
+        await instance.destroyVotation('0', { from: accounts[1] });
+      } catch(e) {
+          assert(e.message.indexOf('Only the owner can update that information') !== -1);
+      }
+
+    });
+
+    it('11. A votação não deve ser deletada por conter votos', async() => {
+      try {
+        
+        const instance = await Elections.deployed();
+        await instance.destroyVotation('0', { from: accounts[0] });
+
+      } catch(e) {
+        assert(e.message.indexOf("Can't delete a started votation") !== -1);
+      }
+    });
+
+    it('12. A votação deve ser deletada', async() => {
+      try {
+
+        const instance = await Elections.deployed();
+
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+
+        const response = await instance.destroyVotation.call('0', { from: accounts[0] });
+
+        assert.equal(response, true);
+      } catch(e) {
+        assert(false);
+      }
+
+    });
+
+    it('13. A votação não deve incluir contas para votação por um usuário não autorizado', async() => {
+      try {
+
+        const instance = await Elections.deployed();
+
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        await instance.setVotationAccounts('0', [], { from: accounts[1] })
+        
+      } catch(e) {
+        assert(e.message.indexOf('Only the owner can update that information') !== -1);
+      }
+
+    });
+
+    it('14. A votação não deve permitir que o "campo contas para votação" seja vazio', async() => {
+      try {
+
+        const instance = await Elections.deployed();
+
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        await instance.setVotationAccounts('0', [], { from: accounts[0] })
+        
+      } catch(e) {
+        assert(e.message.indexOf('Accounts are required') !== -1);
+      }
+
+    });
+
+    it('15. A votação não deve incluir contas para votação em uma votação inativa', async() => {
+      try {
+
+        const instance = await Elections.deployed();
+
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        await instance.inactivateVotation('0');
+        await instance.setVotationAccounts('0', [accounts[1]], { from: accounts[0] })
+        
+      } catch(e) {
+        assert(e.message.indexOf("Can't set votation accounts to an inactive votation") !== -1);
+      }
+
+    });
+
+    it('16. A votação não deve incluir contas para votação', async() => {
+      try {
+
+        const instance = await Elections.deployed();
+
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        await instance.setVotationAccounts('0', [accounts[1]], { from: accounts[0] })
+        
+      } catch(e) {
+        assert(e.message.indexOf("Can't set votation accounts to an inactive votation") !== -1);
+      }
+
     });
 
 

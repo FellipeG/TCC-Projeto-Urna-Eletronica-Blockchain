@@ -170,6 +170,7 @@ contract Elections {
     string[] memory _candidates
   ) public
     onlyOwner
+    returns (bool)
   {
 
     string[] memory emptyArray;
@@ -194,6 +195,7 @@ contract Elections {
       _candidates
     );
 
+    return true;
   }
 
   function getVotationCount()
@@ -248,6 +250,7 @@ contract Elections {
     string[] memory _accounts
   ) public
     onlyOwner
+    returns (bool)
   {
 
     require(_accounts.length != 0, "Accounts are required");
@@ -273,6 +276,8 @@ contract Elections {
       votation.title,
       votation.accounts
     );
+
+    return true;
   }
 
   function inactivateVotation(
