@@ -563,9 +563,9 @@ contract Elections {
 
     // Validations
 
-    bool isCandidateAlreadyVotted = checkIfCandidateIsAlreadyVotted(oldElectoralNumber);
+    bool isCandidateAlreadyVotted = checkIfCandidateIsUsed(oldElectoralNumber);
 
-    require(!isCandidateAlreadyVotted, "Can't update an already votted candidate");
+    require(!isCandidateAlreadyVotted, "Can't update a vinculated candidate");
     require(compareStrings(newFullName, '') == false, "fullName field is required");
     require(compareStrings(newBirthDate, '') == false, "birthDate field is required");
     require(compareStrings(newPoliticalParty, '') == false, "politicalParty field is required");
@@ -614,9 +614,9 @@ contract Elections {
   {
 
     //Validations
-    bool isCandidateAlreadyVotted = checkIfCandidateIsAlreadyVotted(electoralNumber);
+    bool isCandidateAlreadyVotted = checkIfCandidateIsUsed(electoralNumber);
 
-    require(!isCandidateAlreadyVotted, "Can't delete an already votted candidate");
+    require(!isCandidateAlreadyVotted, "Can't delete a vinculated candidate");
 
     Candidate memory candidate;
 
@@ -1029,6 +1029,7 @@ contract Elections {
     return true;
   }
 
+
   function getStateValidation(string memory name)
     private
     view
@@ -1047,15 +1048,15 @@ contract Elections {
     return true;
   }
 
-  function checkIfCandidateIsAlreadyVotted(string memory electoralNumber)
+  function checkIfCandidateIsUsed(string memory electoralNumber)
     private
     view
     returns (bool)
   {
 
     for (uint i = 0; i < getVotationCount(); i++) {
-      for(uint j=0; j < votations[i].votes.length; j++) {
-        if (compareStrings(votations[i].votes[j], electoralNumber)) {
+      for(uint j=0; j < votations[i].candidates.length; j++) {
+        if (compareStrings(votations[i].candidates[j], electoralNumber)) {
           return true;
         }
       }
