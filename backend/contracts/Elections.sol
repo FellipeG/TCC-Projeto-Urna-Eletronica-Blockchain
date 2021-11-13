@@ -259,7 +259,7 @@ contract Elections {
       if (compareStrings(votations[i].id, id)) {
 
         require(votations[i].active, "Can't set votation accounts to an inactive votation");
-        
+
         votations[i].accounts = _accounts;
         votation = votations[i];
         found = true;
@@ -651,7 +651,7 @@ contract Elections {
     onlyOwner
   {
 
-    require(compareStrings(cityName, '') == false, "cityName field is required");
+    require(compareStrings(cityName, '') == false, "City name field is required");
 
     for (uint i = 0; i < getCityCount(); i++) {
       require(!compareStrings(cities[i].name, cityName), "The city name must be unique");
@@ -721,7 +721,7 @@ contract Elections {
     returns (bool)
   {
 
-    require(compareStrings(newCity, '') == false, "cityName field is required");
+    require(compareStrings(newCity, '') == false, "City name field is required");
     
     bool isCityUsed = checkIfCityIsUsed(oldCity);
 
@@ -900,7 +900,7 @@ contract Elections {
     onlyOwner
   {
 
-    require(compareStrings(stateName, '') == false, "state name field is required");
+    require(compareStrings(stateName, '') == false, "State name field is required");
 
     for (uint i = 0; i < stateIndexLength; i++) {
       require(!compareStrings(states[i].name, stateName), "The state name must be unique");
