@@ -22,12 +22,11 @@
                         </router-link>
                     </li>
                     <base-dropdown tag="li" title="Admin" v-show="isAdmin">
-                        <router-link :to="{'name': 'candidatos.index'}" class="dropdown-item">Gerenciar Candidatos</router-link>
                         <router-link :to="{'name': 'partidos_politicos.index'}" class="dropdown-item">Gerenciar Partidos Políticos</router-link>
-                        <router-link :to="{'name': 'cargos_politicos.index'}" class="dropdown-item">Gerenciar Cargos Políticos</router-link>
-                        <div class="dropdown-divider"></div>
                         <router-link :to="{'name': 'cidades.index'}" class="dropdown-item">Gerenciar Cidades</router-link>
                         <router-link :to="{'name': 'estados.index'}" class="dropdown-item">Gerenciar Estados</router-link>
+                        <div class="dropdown-divider"></div>
+                        <router-link :to="{'name': 'candidatos.index'}" class="dropdown-item">Gerenciar Candidatos</router-link>
                         <router-link :to="{'name': 'votacoes.index'}" class="dropdown-item">Gerenciar Votações</router-link>
                     </base-dropdown>
                 </ul>

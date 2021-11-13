@@ -39,11 +39,6 @@ contract Elections {
     bool initialized;
   }
 
-  struct Position {
-    string name;
-    bool initialized;
-  }
-
   struct State {
     string name;
     bool initialized;
@@ -53,7 +48,6 @@ contract Elections {
   uint votationIndexLength;
   uint cityIndexLength;
   uint stateIndexLength;
-  uint positionIndexLength;
   uint politicalPartyIndexLength;
   uint candidateIndexLength;
 
@@ -131,18 +125,6 @@ contract Elections {
     string name
   );
 
-  event CreatedPositionEvent(
-    string name
-  );
-
-  event EditedPositionEvent(
-    string name
-  );
-
-  event DestroyedPositionEvent(
-    string name
-  );
-
   event CreatedStateEvent(
     string name
   );
@@ -159,7 +141,6 @@ contract Elections {
   mapping(uint => Candidate) candidates;
   mapping(uint => City) cities;
   mapping(uint => PoliticalParty) politicalParties;
-  mapping(uint => Position) positions;
   mapping(uint => State) states;
 
 
@@ -168,7 +149,6 @@ contract Elections {
     votationIndexLength = 0;
     cityIndexLength = 0;
     stateIndexLength = 0;
-    positionIndexLength = 0;
     politicalPartyIndexLength = 0;
     candidateIndexLength = 0;
   }
@@ -910,122 +890,6 @@ contract Elections {
     return false;
   }
 
-  // Position methods
-
-  function addPosition(
-    string memory position
-  ) public
-    onlyOwner
-  {
-
-    require(compareStrings(position, '') == false, "position name field is required");
-
-    for (uint i = 0; i < positionIndexLength; i++) {
-      require(!compareStrings(positions[i].name, position), "The position must be unique");
-    }
-
-    positions[positionIndexLength] = Position(position, true);
-    positionIndexLength++;
-
-    emit CreatedPositionEvent(position);
-  }
-
-  function updatePosition(
-    string memory oldPosition,
-    string memory newPosition
-  ) public
-    onlyOwner
-    returns (bool)
-  {
-
-    require(compareStrings(newPosition, '') == false, "position name field is required");
-
-    bool found = false;
-
-    for (uint i = 0; i < getPositionCount(); i++) {
-      if (compareStrings(positions[i].name, oldPosition)) {
-        positions[i].name = newPosition;
-        found = true;
-        break;
-      }
-    }
-  
-    require(found, "Position not found");
-    emit EditedPositionEvent(newPosition);
-    return true;
-  }
-
-  function destroyPosition(
-    string memory position
-  ) public
-    onlyOwner
-    returns (bool)
-  {
-
-    // verificar se a posição não está sendo utilizada antes de deletar
-
-    for (uint i = 0; i < positionIndexLength; i++) {
-      if (compareStrings(positions[i].name, position)) {
-
-        positions[i] = positions[positionIndexLength - 1];
-        delete positions[positionIndexLength - 1];
-        positionIndexLength--;
-        //emit event
-        emit DestroyedPositionEvent(position);
-        return true;
-
-      }
-    }
-    return false;
-  }
-
-  function getPosition(string memory positionName) 
-    public
-    view
-    returns (
-      string memory name
-    )
-  {
-    Position memory position;
-    bool found = false;
-
-    for (uint i = 0; i < getPositionCount(); i++) {
-      if (compareStrings(positions[i].name, positionName)) {
-        position = positions[i];
-        found = true;
-        break;
-      }
-    }
-
-    require(found, "Position not found");
-
-    return(
-      position.name
-    );
-  }
-
-  function getPositionCount()
-    public
-    view
-    returns(uint count)
-  {
-    return positionIndexLength;
-  }
-
-  function getPositionAtIndex(uint index)
-    public
-    view
-    returns(string memory name)
-  {
-    Position memory position = positions[index];
-
-    require(position.initialized, "Position not found");
-
-    return (
-      position.name
-    );
-  }
-
   // State methods
 
   function addState(
@@ -1162,15 +1026,6 @@ contract Elections {
     returns (bool)
   {
     getPoliticalParty(name);
-    return true;
-  }
-
-  function getPositionValidation(string memory name)
-    private
-    view
-    returns (bool) 
-  {
-    getPosition(name);
     return true;
   }
 
