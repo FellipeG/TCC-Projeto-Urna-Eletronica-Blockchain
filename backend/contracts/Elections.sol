@@ -396,6 +396,7 @@ contract Elections {
 
     for (uint i = 0; i < getVotationCount(); i++) {
       if (compareStrings(votations[i].id, id)) {
+        require(votations[i].votes.length == 0, "Can't update a started votation");
         votations[i].title = newTitle;
         votations[i].candidates = _candidates;
         found = true;
@@ -421,12 +422,13 @@ contract Elections {
 
     Votation memory votation;
 
-    // verificar se a posição não está sendo utilizada antes de deletar
-
     for (uint i = 0; i < getVotationCount(); i++) {
       if (compareStrings(votations[i].id, id)) {
 
         votation = votations[i];
+
+        require(votation.votes.length == 0, "Can't delete a started votation");
+
         votations[i] = votations[getVotationCount() - 1];
         votations[i].id = id;
 
@@ -580,6 +582,10 @@ contract Elections {
   {
 
     // Validations
+
+    bool isCandidateAlreadyVotted = checkIfCandidateIsAlreadyVotted(oldElectoralNumber);
+
+    require(!isCandidateAlreadyVotted, "Can't update an already votted candidate");
     require(compareStrings(newFullName, '') == false, "fullName field is required");
     require(compareStrings(newBirthDate, '') == false, "birthDate field is required");
     require(compareStrings(newPoliticalParty, '') == false, "politicalParty field is required");
@@ -627,9 +633,12 @@ contract Elections {
     returns (bool)
   {
 
-    Candidate memory candidate;
+    //Validations
+    bool isCandidateAlreadyVotted = checkIfCandidateIsAlreadyVotted(electoralNumber);
 
-    // verificar se a posição não está sendo utilizada antes de deletar
+    require(!isCandidateAlreadyVotted, "Can't delete an already votted candidate");
+
+    Candidate memory candidate;
 
     for (uint i = 0; i < getCandidateCount(); i++) {
       if (compareStrings(candidates[i].electoralNumber, electoralNumber)) {
@@ -731,6 +740,10 @@ contract Elections {
   {
 
     require(compareStrings(newCity, '') == false, "cityName field is required");
+    
+    bool isCityUsed = checkIfCityIsUsed(oldCity);
+
+    require(!isCityUsed, "Can't update a vinculated city");
 
     bool found = false;
 
@@ -754,7 +767,9 @@ contract Elections {
     returns (bool)
   {
 
-    // verificar se a posição não está sendo utilizada antes de deletar
+    bool isCityUsed = checkIfCityIsUsed(city);
+
+    require(!isCityUsed, "Can't delete a vinculated city");
 
     for (uint i = 0; i < getCityCount(); i++) {
       if (compareStrings(cities[i].name, city)) {
@@ -849,6 +864,11 @@ contract Elections {
 
     require(compareStrings(newPoliticalParty, '') == false, "politicalParty name field is required");
 
+    bool isPoliticalPartyUsed = checkIfPoliticalPartyIsUsed(oldPoliticalParty);
+
+    require(!isPoliticalPartyUsed, "Can't update a vinculated political party");
+
+
     bool found = false;
 
     for (uint i = 0; i < getPoliticalPartyCount(); i++) {
@@ -871,7 +891,9 @@ contract Elections {
     returns (bool)
   {
 
-    // verificar se a posição não está sendo utilizada antes de deletar
+    bool isPoliticalPartyUsed = checkIfPoliticalPartyIsUsed(politicalParty);
+
+    require(!isPoliticalPartyUsed, "Can't delete a vinculated political party");
 
     for (uint i = 0; i < getPoliticalPartyCount(); i++) {
       if (compareStrings(politicalParties[i].name, politicalParty)) {
@@ -1086,6 +1108,10 @@ contract Elections {
 
     require(compareStrings(newState, '') == false, "state name field is required");
 
+    bool isStateUsed = checkIfStateIsUsed(oldState);
+
+    require(!isStateUsed, "Can't update a vinculated state");
+
     bool found = false;
 
     for (uint i = 0; i < getStateCount(); i++) {
@@ -1108,7 +1134,9 @@ contract Elections {
     returns (bool)
   {
 
-    // verificar se a posição não está sendo utilizada antes de deletar
+    bool isStateUsed = checkIfStateIsUsed(state);
+
+    require(!isStateUsed, "Can't delete a vinculated state");
 
     for (uint i = 0; i < getStateCount(); i++) {
       if (compareStrings(states[i].name, state)) {
@@ -1162,6 +1190,65 @@ contract Elections {
   {
     getCity(name);
     return true;
+  }
+
+  function checkIfCandidateIsAlreadyVotted(string memory electoralNumber)
+    private
+    view
+    returns (bool)
+  {
+
+    for (uint i = 0; i < getVotationCount(); i++) {
+      for(uint j=0; j < votations[i].votes.length; j++) {
+        if (compareStrings(votations[i].votes[j], electoralNumber)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  function checkIfPoliticalPartyIsUsed(string memory politicalPartyName)
+    private
+    view
+    returns (bool)
+  {
+    for (uint i = 0; i < getCandidateCount(); i++) {
+      if (compareStrings(candidates[i].politicalParty, politicalPartyName)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function checkIfStateIsUsed(string memory state)
+    private
+    view
+    returns (bool)
+  {
+    for (uint i = 0; i < getCandidateCount(); i++) {
+      if (compareStrings(candidates[i].state, state)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function checkIfCityIsUsed(string memory city)
+    private
+    view
+    returns (bool)
+  {
+    for (uint i = 0; i < getCandidateCount(); i++) {
+      if (compareStrings(candidates[i].city, city)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   // utils
