@@ -972,7 +972,7 @@ contract Elections {
     returns (bool)
   {
 
-    require(compareStrings(newState, '') == false, "state name field is required");
+    require(compareStrings(newState, '') == false, "State name field is required");
 
     bool isStateUsed = checkIfStateIsUsed(oldState);
 

@@ -204,6 +204,7 @@ contract("Elections", accounts => {
 
   describe('Estados', () => {
     const name = 'RJ';
+    const newName = 'SP';
 
     it('1. O estado não deve ser cadastrado por um usuário não autorizado', () => {
         return Elections.deployed()
@@ -264,10 +265,10 @@ contract("Elections", accounts => {
       assert.equal(state, name);
     });
 
-    it('7. A cidade não deve ser atualizada por um usuário não autorizado', () => {
+    it('7. O estado não deve ser atualizado por um usuário não autorizado', () => {
       return Elections.deployed()
       .then((instance) => {
-        return instance.updateCity(name, newName, { from: accounts[1] });
+        return instance.updateState(name, newName, { from: accounts[1] });
       })
       .then(assert.fail)
       .catch((e) => {
@@ -275,27 +276,27 @@ contract("Elections", accounts => {
       })
     });
 
-    it('8. A cidade não deve ser atualizada com o nome vazio', () => {
+    it('8. O estado não deve ser atualizado com o nome vazio', () => {
       return Elections.deployed()
       .then((instance) => {
-        return instance.updateCity(name, '', { from: accounts[0] });
+        return instance.updateState(name, '', { from: accounts[0] });
       })
       .then(assert.fail)
       .catch((e) => {
-        assert(e.message.indexOf('City name field is required') !== -1);
+        assert(e.message.indexOf('State name field is required') !== -1);
       })
     });
 
-    it('9. A cidade deve ser atualizada', async() => {
+    it('9. O estado deve ser atualizado', async() => {
 
       const instance = await Elections.deployed();
-      await instance.updateCity(name, newName, { from: accounts[0] });
+      await instance.updateState(name, newName, { from: accounts[0] });
 
-      const city = await instance.getCity(newName);
+      const city = await instance.getState(newName);
       assert.equal(city, newName);
     });
 
-    it('10. A cidade não deve ser atualizada por ter uma vinculação com candidato', async() => {
+    it('10. O estado não deve ser atualizado por ter uma vinculação com candidato', async() => {
 
       const instance = await Elections.deployed();
 
@@ -303,13 +304,13 @@ contract("Elections", accounts => {
         fullName: 'Nome Completo',
         birthDate: '1970-10-22',
         politicalParty: 'Partido X',
-        state: 'RJ',
-        city: 'São Paulo',
+        state: newName,
+        city: 'Santa Catarina',
         electoralNumber: '15122'
       };
 
       await instance.addPoliticalParty(candidateObj.politicalParty, { from: accounts[0] });
-      await instance.addState(candidateObj.state, { from: accounts[0] });
+      await instance.addCity(candidateObj.city, { from: accounts[0] });
 
       await instance.addCandidate(
         candidateObj.fullName,
@@ -322,22 +323,22 @@ contract("Elections", accounts => {
       );
 
       try {
-        await instance.updateCity(newName, 'Nova cidade', { from: accounts[0] })
+        await instance.updateState(newName, 'Novo Estado', { from: accounts[0] })
       } catch(e){
         await instance.destroyCandidate(candidateObj.electoralNumber, { from: accounts[0] });
         await instance.destroyPoliticalParty(candidateObj.politicalParty, { from: accounts[0] });
-        await instance.destroyState(candidateObj.state, { from: accounts[0] });
+        await instance.destroyCity(candidateObj.city, { from: accounts[0] });
 
-        assert(e.message.indexOf("Can't update a vinculated city") !== -1);
+        assert(e.message.indexOf("Can't update a vinculated state") !== -1);
       }
     });
 
-    it('11. A cidade não deve ser deletada por um usuário não autorizado', () => {
+    it('11. O estado não deve ser deletado por um usuário não autorizado', () => {
       
       Elections
         .deployed()
         .then((instance) => {
-          return instance.destroyCity(newName, { from: accounts[1] });
+          return instance.destroyState(newName, { from: accounts[1] });
         })
         .then(assert.fail)
         .catch((e) => {
@@ -345,21 +346,21 @@ contract("Elections", accounts => {
         });
     });
 
-    it('12. A cidade não deve ser deletada por ter uma vinculação com candidato', async() => {
+    it('12. O estado não deve ser deletado por ter uma vinculação com candidato', async() => {
 
       const candidateObj = {
         fullName: 'Nome Completo',
         birthDate: '1970-10-22',
         politicalParty: 'Partido W',
-        state: 'MG',
-        city: newName,
+        state: newName,
+        city: 'Santa Catarina',
         electoralNumber: '15133'
       };
 
       const instance = await Elections.deployed();
 
       await instance.addPoliticalParty(candidateObj.politicalParty, { from: accounts[0] });
-      await instance.addState(candidateObj.state, { from: accounts[0] });
+      await instance.addCity(candidateObj.city, { from: accounts[0] });
 
       await instance.addCandidate(
         candidateObj.fullName,
@@ -373,23 +374,23 @@ contract("Elections", accounts => {
 
       try {
 
-        await instance.destroyCity(newName, { from: accounts[0] });
+        await instance.destroyState(newName, { from: accounts[0] });
           
       } catch(e) {
 
         await instance.destroyCandidate(candidateObj.electoralNumber, { from: accounts[0] });
         await instance.destroyPoliticalParty(candidateObj.politicalParty, { from: accounts[0] });
-        await instance.destroyState(candidateObj.state, { from: accounts[0] });
+        await instance.destroyCity(candidateObj.city, { from: accounts[0] });
 
-        assert(e.message.indexOf("Can't delete a vinculated city") !== -1);
+        assert(e.message.indexOf("Can't delete a vinculated state") !== -1);
       }
 
     });
 
-    it('13. A cidade deve ser deletada', async() => {
+    it('13. O estado deve ser deletado', async() => {
 
       const instance = await Elections.deployed();
-      const response = await instance.destroyCity.call(newName, { from: accounts[0] });
+      const response = await instance.destroyState.call(newName, { from: accounts[0] });
       assert.equal(response, true);
 
     });
