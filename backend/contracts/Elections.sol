@@ -776,7 +776,7 @@ contract Elections {
     onlyOwner
   {
 
-    require(compareStrings(name, '') == false, "politicalParty name field is required");
+    require(compareStrings(name, '') == false, "Political party name field is required");
 
     for (uint i = 0; i < politicalPartyIndexLength; i++) {
       require(!compareStrings(politicalParties[i].name, name), "The political party must be unique");
@@ -844,7 +844,7 @@ contract Elections {
     returns (bool)
   {
 
-    require(compareStrings(newPoliticalParty, '') == false, "politicalParty name field is required");
+    require(compareStrings(newPoliticalParty, '') == false, "Political party name field is required");
 
     bool isPoliticalPartyUsed = checkIfPoliticalPartyIsUsed(oldPoliticalParty);
 

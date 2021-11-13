@@ -398,7 +398,8 @@ contract("Elections", accounts => {
   });
 
   describe('Partidos Políticos', () => {
-    const name = 'Partido X';
+    const name = 'Partido A';
+    const newName = 'Partido B';
 
     it('1. O partido político não deve ser cadastrado por um usuário não autorizado', () => {
         return Elections.deployed()
@@ -411,7 +412,18 @@ contract("Elections", accounts => {
         })
     });
 
-    it('2. O partido político deve ser cadastrado', async() => {
+    it('2. O partido político não deve ser cadastrado com o nome vazio', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.addPoliticalParty('', { from: accounts[0] });
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Political party name field is required') !== -1);
+      })
+    });
+
+    it('3. O partido político deve ser cadastrado', async() => {
 
       const instance = await Elections.deployed();
       await instance.addPoliticalParty(name, { from: accounts[0] });
@@ -420,7 +432,7 @@ contract("Elections", accounts => {
       assert.equal(politicalParty, name);
     });
 
-    it('3. O partido político não deve ser cadastrado por ser duplicado', () => {
+    it('4. O partido político não deve ser cadastrado por ser duplicado', () => {
       return Elections.deployed()
       .then((instance) => {
         return instance.addPoliticalParty(name, { from: accounts[0] });
@@ -431,7 +443,7 @@ contract("Elections", accounts => {
       })
     });
 
-    it('4. Deve ocorrer erro ao buscar por um partido político não existente', () => {
+    it('5. Deve ocorrer erro ao buscar por um partido político não existente', () => {
       return Elections.deployed()
       .then((instance) => {
         return instance.getPoliticalParty('Partido Y', { from: accounts[0] });
@@ -442,10 +454,140 @@ contract("Elections", accounts => {
       })
     });
 
-    it('5. Deve retornar sucesso ao buscar por um partido político existente', async () => {
+    it('6. Deve retornar sucesso ao buscar por um partido político existente', async () => {
       const instance = await Elections.deployed();
       const policicalParty = await instance.getPoliticalParty(name);
       assert.equal(policicalParty, name);
+    });
+
+    it('7. O partido político não deve ser atualizado por um usuário não autorizado', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.updatePoliticalParty(name, newName, { from: accounts[1] });
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Only the owner can update that information') !== -1);
+      })
+    });
+
+    it('8. O partido político não deve ser atualizado com o nome vazio', () => {
+      return Elections.deployed()
+      .then((instance) => {
+        return instance.updatePoliticalParty(name, '', { from: accounts[0] });
+      })
+      .then(assert.fail)
+      .catch((e) => {
+        assert(e.message.indexOf('Political party name field is required') !== -1);
+      })
+    });
+
+    it('9. O partido político deve ser atualizado', async() => {
+
+      const instance = await Elections.deployed();
+      await instance.updatePoliticalParty(name, newName, { from: accounts[0] });
+
+      const city = await instance.getPoliticalParty(newName);
+      assert.equal(city, newName);
+    });
+
+    it('10. O partido político não deve ser atualizado por ter uma vinculação com candidato', async() => {
+
+      const instance = await Elections.deployed();
+
+      const candidateObj = {
+        fullName: 'Nome Completo',
+        birthDate: '1970-10-22',
+        politicalParty: newName,
+        state: 'PR',
+        city: 'Paraná',
+        electoralNumber: '15000'
+      };
+
+      await instance.addState(candidateObj.state, { from: accounts[0] });
+      await instance.addCity(candidateObj.city, { from: accounts[0] });
+
+      await instance.addCandidate(
+        candidateObj.fullName,
+        candidateObj.birthDate,
+        candidateObj.politicalParty,
+        candidateObj.state,
+        candidateObj.city,
+        candidateObj.electoralNumber,
+        { from: accounts[0] }
+      );
+
+      try {
+        await instance.updatePoliticalParty(newName, 'Novo Partido Político', { from: accounts[0] })
+      } catch(e){
+        await instance.destroyCandidate(candidateObj.electoralNumber, { from: accounts[0] });
+        await instance.destroyState(candidateObj.state, { from: accounts[0] });
+        await instance.destroyCity(candidateObj.city, { from: accounts[0] });
+
+        assert(e.message.indexOf("Can't update a vinculated political party") !== -1);
+      }
+    });
+
+    it('11. O partido político não deve ser deletado por um usuário não autorizado', () => {
+      
+      Elections
+        .deployed()
+        .then((instance) => {
+          return instance.destroyPoliticalParty(newName, { from: accounts[1] });
+        })
+        .then(assert.fail)
+        .catch((e) => {
+          assert(e.message.indexOf("Only the owner can update that information") !== -1);
+        });
+    });
+
+    it('12. O partido político não deve ser deletado por ter uma vinculação com candidato', async() => {
+
+      const candidateObj = {
+        fullName: 'Nome Completo',
+        birthDate: '1970-10-22',
+        politicalParty: newName,
+        state: 'PR',
+        city: 'Paraná',
+        electoralNumber: '15000'
+      };
+
+      const instance = await Elections.deployed();
+
+      await instance.addState(candidateObj.state, { from: accounts[0] });
+      await instance.addCity(candidateObj.city, { from: accounts[0] });
+
+      await instance.addCandidate(
+        candidateObj.fullName,
+        candidateObj.birthDate,
+        candidateObj.politicalParty,
+        candidateObj.state,
+        candidateObj.city,
+        candidateObj.electoralNumber,
+        { from: accounts[0] }
+      );
+
+      try {
+
+        await instance.destroyPoliticalParty(newName, { from: accounts[0] });
+          
+      } catch(e) {
+
+        await instance.destroyCandidate(candidateObj.electoralNumber, { from: accounts[0] });
+        await instance.destroyState(candidateObj.state, { from: accounts[0] });
+        await instance.destroyCity(candidateObj.city, { from: accounts[0] });
+
+        assert(e.message.indexOf("Can't delete a vinculated political party") !== -1);
+      }
+
+    });
+
+    it('13. O partido político deve ser deletado', async() => {
+
+      const instance = await Elections.deployed();
+      const response = await instance.destroyPoliticalParty.call(newName, { from: accounts[0] });
+      assert.equal(response, true);
+
     });
 
   });
