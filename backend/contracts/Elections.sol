@@ -159,7 +159,7 @@ contract Elections {
   }
 
   modifier notOwner {
-    require(owner == msg.sender, "The owner can not update that information");
+    require(owner != msg.sender, "The owner can not update that information");
     _;
   }
 
@@ -303,8 +303,7 @@ contract Elections {
   ) public
     notOwner
   {
-    require(compareStrings(account, ''), "Account is required");
-
+    
     bool found = false;
     Votation memory votation;
 
