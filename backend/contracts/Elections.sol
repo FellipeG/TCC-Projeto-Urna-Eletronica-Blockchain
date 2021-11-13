@@ -284,6 +284,7 @@ contract Elections {
     string memory id
   ) public
     onlyOwner
+    returns (bool)
   {
     Votation memory votation;
     bool found = false;
@@ -302,6 +303,8 @@ contract Elections {
     emit InactivatedVotationEvent(
       votation.title
     );
+
+    return true;
   }
 
   function setVote(

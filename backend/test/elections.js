@@ -1337,6 +1337,38 @@ contract("Elections", accounts => {
 
     });
 
+    it('16. A votação não deve ser inativada por um usuário não autorizado', async() => {
+      try {
+
+        const instance = await Elections.deployed();
+
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        await instance.inactivateVotation('0', { from: accounts[1] });
+        
+      } catch(e) {
+        assert(e.message.indexOf("Only the owner can update that information") !== -1);
+      }
+
+    });
+
+    it('17. A votação deve ser inativada', async() => {
+      try {
+
+        const instance = await Elections.deployed();
+
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        const response = await instance.inactivateVotation.call('0', { from: accounts[0] });
+
+        assert.equal(response, true);
+        
+      } catch(e) {
+        assert(false);
+      }
+
+    });
+
 
   });
 
