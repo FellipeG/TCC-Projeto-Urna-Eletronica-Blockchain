@@ -313,6 +313,7 @@ contract Elections {
     string memory account
   ) public
     notOwner
+    returns (bool)
   {
 
     bool found = false;
@@ -320,6 +321,8 @@ contract Elections {
 
     for (uint i = 0; i < getVotationCount(); i++) {
       if (compareStrings(votations[i].id, id)) {
+
+        require(votations[i].active, "Can't set votes to an inactive votation");
 
         string[] storage votationArray = votations[i].votes;
         string[] storage vottedAccountsArray = votations[i].vottedAccounts;
@@ -340,6 +343,8 @@ contract Elections {
     require(found, "Votation not found");
 
     emit SettedVoteEvent(votation.title);
+
+    return true;
   }
 
   function getVotationAtIndex(uint index)
