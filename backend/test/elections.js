@@ -1337,7 +1337,7 @@ contract("Elections", accounts => {
 
     });
 
-    it('16. A votação não deve ser inativada por um usuário não autorizado', async() => {
+    it('17. A votação não deve ser inativada por um usuário não autorizado', async() => {
       try {
 
         const instance = await Elections.deployed();
@@ -1352,7 +1352,7 @@ contract("Elections", accounts => {
 
     });
 
-    it('17. A votação deve ser inativada', async() => {
+    it('18. A votação deve ser inativada', async() => {
       try {
 
         const instance = await Elections.deployed();
@@ -1369,97 +1369,97 @@ contract("Elections", accounts => {
 
     });
 
-    describe('Votos', () => {
+  });
 
-      const votation = {
-        title: 'Prefeito',
-        candidates: [accounts[0]],
-        votationAccounts: [accounts[0], accounts[1], accounts[2]]
-      };
-  
-      it('1. Não é permitido ao administrador realizar um voto', async() => {
-  
-        try {
-  
-          const instance = await Elections.deployed();
-          await instance.destroyVotation('0', { from: accounts[0] });
-          await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
-          await instance.setVotationAccounts('0', votation.votationAccounts, { from: accounts[0] })
-          await instance.setVote('0', '', accounts[0], { from: accounts[0] });
+  describe('Votos', () => {
 
-        } catch(e) {
-            assert(e.message.indexOf('The owner can not update that information') !== -1);
-        }
-  
-      });
+    const votation = {
+      title: 'Prefeito',
+      candidates: [accounts[0]],
+      votationAccounts: [accounts[0], accounts[1], accounts[2]]
+    };
 
-      it('2. Não é permitido realizar um voto após a votação ser inativada', async() => {
-  
-        try {
-  
-          const instance = await Elections.deployed();
-          await instance.destroyVotation('0', { from: accounts[0] });
-          await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
-          await instance.setVotationAccounts('0', votation.votationAccounts, { from: accounts[0] })
-          await instance.inactivateVotation('0');
-          await instance.setVote('0', '', accounts[1], { from: accounts[1] });
+    it('1. Não é permitido ao administrador realizar um voto', async() => {
 
-        } catch(e) {
-            assert(e.message.indexOf("Can't set votes to an inactive votation") !== -1);
-        }
-  
-      });
+      try {
 
-      it('3. Deve realizar um voto em branco', async() => {
-  
-        try {
-  
-          const instance = await Elections.deployed();
-          await instance.destroyVotation('0', { from: accounts[0] });
-          await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
-          await instance.setVotationAccounts('0', votation.votationAccounts, { from: accounts[0] })
-          const response = await instance.setVote.call('0', '', accounts[1], { from: accounts[1] });
+        const instance = await Elections.deployed();
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        await instance.setVotationAccounts('0', votation.votationAccounts, { from: accounts[0] })
+        await instance.setVote('0', '', accounts[0], { from: accounts[0] });
 
-          assert.equal(response, true);
-        } catch(e) {
-            assert(false);
-        }
-  
-      });
+      } catch(e) {
+          assert(e.message.indexOf('The owner can not update that information') !== -1);
+      }
 
-      it('4. Deve realizar um voto nulo', async() => {
-  
-        try {
-  
-          const instance = await Elections.deployed();
-          await instance.destroyVotation('0', { from: accounts[0] });
-          await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
-          await instance.setVotationAccounts('0', votation.votationAccounts, { from: accounts[0] })
-          const response = await instance.setVote.call('0', '123456', accounts[1], { from: accounts[1] });
+    });
 
-          assert.equal(response, true);
-        } catch(e) {
-            assert(false);
-        }
-  
-      });
+    it('2. Não é permitido realizar um voto após a votação ser inativada', async() => {
 
-      it('5. Deve realizar um voto', async() => {
-  
-        try {
-  
-          const instance = await Elections.deployed();
-          await instance.destroyVotation('0', { from: accounts[0] });
-          await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
-          await instance.setVotationAccounts('0', votation.votationAccounts, { from: accounts[0] })
-          const response = await instance.setVote.call('0', accounts[0], accounts[1], { from: accounts[1] });
+      try {
 
-          assert.equal(response, true);
-        } catch(e) {
-            assert(false);
-        }
-  
-      });
+        const instance = await Elections.deployed();
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        await instance.setVotationAccounts('0', votation.votationAccounts, { from: accounts[0] })
+        await instance.inactivateVotation('0');
+        await instance.setVote('0', '', accounts[1], { from: accounts[1] });
+
+      } catch(e) {
+          assert(e.message.indexOf("Can't set votes to an inactive votation") !== -1);
+      }
+
+    });
+
+    it('3. Deve realizar um voto em branco', async() => {
+
+      try {
+
+        const instance = await Elections.deployed();
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        await instance.setVotationAccounts('0', votation.votationAccounts, { from: accounts[0] })
+        const response = await instance.setVote.call('0', '', accounts[1], { from: accounts[1] });
+
+        assert.equal(response, true);
+      } catch(e) {
+          assert(false);
+      }
+
+    });
+
+    it('4. Deve realizar um voto nulo', async() => {
+
+      try {
+
+        const instance = await Elections.deployed();
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        await instance.setVotationAccounts('0', votation.votationAccounts, { from: accounts[0] })
+        const response = await instance.setVote.call('0', '123456', accounts[1], { from: accounts[1] });
+
+        assert.equal(response, true);
+      } catch(e) {
+          assert(false);
+      }
+
+    });
+
+    it('5. Deve realizar um voto', async() => {
+
+      try {
+
+        const instance = await Elections.deployed();
+        await instance.destroyVotation('0', { from: accounts[0] });
+        await instance.addVotation(votation.title, votation.candidates, { from: accounts[0] });
+        await instance.setVotationAccounts('0', votation.votationAccounts, { from: accounts[0] })
+        const response = await instance.setVote.call('0', accounts[0], accounts[1], { from: accounts[1] });
+
+        assert.equal(response, true);
+      } catch(e) {
+          assert(false);
+      }
 
     });
 
