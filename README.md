@@ -68,7 +68,7 @@ Conta 10
 
 ![image](https://user-images.githubusercontent.com/29721231/141219829-aaf75a26-e949-493b-b2cb-1f3af4cdf3ce.png)
 
-4. Se abrirá uma tela perguntando se concorda ou não com a coleta de informações afim de melhorar o metamask, fica a critério concordar ou não:
+4. Se abrirá uma tela perguntando se concorda ou não com a coleta de informações a fim de melhorar o metamask, fica a critério concordar ou não:
 
 ![image](https://user-images.githubusercontent.com/29721231/141220056-641a8209-4203-4edd-a8bd-8af3b2c79dde.png)
 
